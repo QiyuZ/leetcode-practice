@@ -1,0 +1,27 @@
+class MyCalendarTwo {
+    private List<int[]> books = new ArrayList<>();    
+    public boolean book(int s, int e) {
+        MyCalendar overlaps = new MyCalendar();
+        for (int[] b : books)
+            if (Math.max(b[0], s) < Math.min(b[1], e)) // end找小的，如果还是end大说明有重叠
+                if (!overlaps.book(Math.max(b[0], s), Math.min(b[1], e))) return false; // 把重叠作为一个新区间调用calendari的函数
+        books.add(new int[]{ s, e });
+        return true;
+    }
+    
+    class MyCalendar {
+        TreeMap<Integer, Integer> time;
+        public MyCalendar() {
+            time = new TreeMap<>();
+        }
+
+        public boolean book(int start, int end) {
+            Integer floorStart = time.floorKey(start);
+            if (floorStart != null && time.get(floorStart) > start) return false;
+            Integer ceilingStart = time.ceilingKey(start);
+            if (ceilingStart != null && ceilingStart < end) return false;
+            time.put(start, end);
+            return true;
+        }
+    }
+}
