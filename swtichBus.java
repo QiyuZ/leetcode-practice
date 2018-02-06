@@ -18,12 +18,12 @@ class Solution {
             int[] cur = queue.poll();
             Bus bus = map.get(cur[0]);
             int swtich = cur[1];
-            //if (visited.contains(bus.id)) continue;
-            //visited.add(bus.id);
+            if (visited.contains(bus.id)) continue;
+            visited.add(bus.id);
             if (bus.stops.contains(target)) res = Math.min(res, swtich);
             for (int i = 0; i < buses.length; i++) {
                 if (bus == buses[i]) continue;
-                if (hasoverlap(bus, buses[i])) queue.offer(new int[] {buses[i].id, swtich + 1});
+                if (!visited.contains(buses[i].id) && hasoverlap(bus, buses[i])) queue.offer(new int[] {buses[i].id, swtich + 1});
             }
         }
         return -1;
