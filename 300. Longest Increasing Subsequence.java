@@ -1,4 +1,4 @@
-/* n^2
+// n^2
 class Solution {
     public int lengthOfLIS(int[] nums) {
         if (nums == null || nums.length == 0) return 0;
@@ -14,7 +14,7 @@ class Solution {
         return max;
     }
 }
-*/
+
 
 //nlogn  为什么可以用二分法呢？因为tails这个数组就是结果的数组，是有序的
 class Solution {
