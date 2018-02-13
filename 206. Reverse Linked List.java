@@ -9,6 +9,7 @@ class Solution {
             newNode = head;
             next = head;
         }
+        return newNode;
     }
 }
 
