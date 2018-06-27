@@ -1,42 +1,31 @@
 class Solution {
     public int strongPasswordChecker(String s) {
-        int res = 0, a = 1, A = 1, d = 1;
-        char[] carr = s.toCharArray();
-        int[] arr = new int[carr.length];
-        for (int i = 0; i < arr.length;) {
-            if (Character.isLowerCase(carr[i])) a = 0;
-            if (Character.isUpperCase(carr[i])) A = 0;
-            if (Character.isDigit(carr[i])) d = 0; 
-            int j = i;
-            while (i < carr.length && carr[i] == carr[j]) i++;
-            arr[j] = i - j;
+        int low = 0, upp = 0, dig = 0;
+        int[] count = new int[3];
+        int rep = 0;
+        int i = 0;
+        while (i < s.length()) {
+            char c = s.charAt(i);
+            if (c <= 'z' && c >= 'a') low |= 1;
+            else if (c <= 'Z' && c >= 'A') upp |= 1;
+            else if (c <= '9' && c >= '0') dig |= 1;
+            int j = i + 1;
+            while (j < s.length() && s.charAt(j) == s.charAt(i)) j++;
+            int len = j - i;
+            if (len >= 3) {
+                count[len % 3]++;
+                rep += len / 3;
+            }   
+            i = j;
         }
-        int total_missing = (a + A + d);
-        if (arr.length < 6) res += total_missing + Math.max(0, 6 - (arr.length + total_missing));    
-        else {
-            int over_len = Math.max(arr.length - 20, 0), left_over = 0;
-            res += over_len;
-            for (int k = 1; k < 3; k++) {
-                for (int i = 0; i < arr.length && over_len > 0; i++) {
-                    if (arr[i] < 3 || arr[i] % 3 != (k - 1)) continue;
-                    arr[i] -= Math.min(over_len, k);
-                    over_len -= k;
-                }
-            }
-
-            for (int i = 0; i < arr.length; i++) {
-                if (arr[i] >= 3 && over_len > 0) {
-                    int need = arr[i] - 2;
-                    arr[i] -= over_len;
-                    over_len -= need;
-                }
-
-                if (arr[i] >= 3) left_over += arr[i] / 3;
-            }
-
-            res += Math.max(total_missing, left_over);
-        }
-
+        int miss = 3 - (low + upp + dig);
+        if (s.length() < 6) return Math.max(6 - s.length(), miss); //小于6返回缺失的或者不满足三个要求的个数
+        if (s.length() <= 20) return Math.max(rep, miss); //小于20返回需要被替换的或者不满足条件的个数
+        int del = s.length() - 20;
+        int res = 0;
+        if (del <= count[0]) res = del + Math.max(rep - del, miss); 
+        else if (del <= count[1]) res = del + Math.max(rep - count[0] - (del - count[0]) / 2, miss); //尽量都变成3k+2的因为替换一个就行
+        else res = del + Math.max(rep - count[0] - count[1] - (del - count[0] - 2 * count[1]) / 3, miss);
         return res;
     }
 }
