@@ -49,3 +49,30 @@ class Solution {
         }
     }
 }
+
+
+
+//空间为n的
+public class Solution {
+    
+    TreeNode firstElement = null;
+    TreeNode secondElement = null;
+    TreeNode prevElement = new TreeNode(Integer.MIN_VALUE);
+    public void recoverTree(TreeNode root) {
+        traverse(root);
+        int temp = firstElement.val;
+        firstElement.val = secondElement.val;
+        secondElement.val = temp;
+    }
+    private void traverse(TreeNode root) {
+        if (root == null) return;  
+        traverse(root.left);
+        // Start of "do some business", 
+        // If first element has not been found, assign it to prevElement (refer to 6 in the example above)
+        if (firstElement == null && prevElement.val >= root.val) firstElement = prevElement;
+        // If first element is found, assign the second element to the root (refer to 2 in the example above)
+        if (firstElement != null && prevElement.val >= root.val) secondElement = root;
+        prevElement = root;
+        // End of "do some business"
+        traverse(root.right);
+}
