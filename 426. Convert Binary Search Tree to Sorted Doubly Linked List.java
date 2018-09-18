@@ -38,3 +38,24 @@ class Solution {
         return first;
     }
 }
+
+class Solution {
+    Node pre = null;
+    public Node treeToDoublyList(Node root) {
+        if (root == null) return null;
+        Node dummy = new Node(0, null, null);
+        pre = dummy;
+        helper(root);
+        pre.right = dummy.right;//此时pre在最后，dummy还在开头，左右相连
+        dummy.right.left = pre;
+        return dummy.right;
+    }
+    public void helper(Node cur) {//inorder时左右连接
+        if (cur == null) return;
+        helper(cur.left);
+        pre.right = cur;
+        cur.left = pre;
+        pre = pre.right; //更新pre
+        helper(cur.right);
+    }
+}
