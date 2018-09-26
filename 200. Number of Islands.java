@@ -25,7 +25,7 @@ class Solution {
 
 //union find
 class Solution {
-    public int numIslands(char[][] grid) {
+    public int numIslands(char[][] grid) { //union find方法
         if (grid == null || grid.length == 0) return 0;
         int count = 0, m = grid.length, n = grid[0].length;
         int[] union = new int[m * n];
@@ -33,13 +33,13 @@ class Solution {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == '1') {
-                    union[i * n + j] = i * n + j;
+                    union[i * n + j] = i * n + j; //当前变为index再对比和上面的与左边的，这样一直比较的是原来的，根不变
                     count++;
                     for (int[] dir : dirs) {
                         int x = i + dir[0], y = j + dir[1];
                         if (x < 0 || x >= m || y < 0 || y >= n || grid[x][y] != '1') continue;
                         int a = i * n + j, b = find(union, x * n + y);
-                        if (a != b) {
+                        if (a != b) { //相邻的为一体应该相等，如果不等要计数-1同时把根变为a
                             count--;
                             union[b] = a;
                         }
