@@ -11,10 +11,10 @@ class Solution {
     TreeNode pre = null;
     public void flatten(TreeNode root) {
         if (root == null) return;
-        flatten(root.right);
+        flatten(root.right); //先右边因为最后一个要最先访问作为pre加上去。比如2,3,4， 形成的时候是4->3,4->2,3,4,就是右左中的顺序
         flatten(root.left);
-        root.right = pre; //右边放为之前的，左边的置为null,从右下-右上-左下-左上，比如到root=4时pre就是5
         root.left = null;
+        root.right = pre;
         pre = root;
     }
 }
