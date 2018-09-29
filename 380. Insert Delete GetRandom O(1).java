@@ -1,15 +1,17 @@
 class RandomizedSet {
-    Map<Integer, Integer> map; //用来记录位置
     List<Integer> list;
+    Map<Integer, Integer> map;
+    Random rand;
     /** Initialize your data structure here. */
     public RandomizedSet() {
-        map = new HashMap<>();
         list = new ArrayList<>();
+        map = new HashMap<>();
+        rand = new Random();
     }
     
     /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
     public boolean insert(int val) {
-        if (list.contains(val)) return false;
+        if (map.containsKey(val)) return false;
         map.put(val, list.size());
         list.add(val);
         return true;
@@ -17,22 +19,27 @@ class RandomizedSet {
     
     /** Removes a value from the set. Returns true if the set contained the specified element. */
     public boolean remove(int val) {
-        if (!list.contains(val)) return false;
-        if (map.get(val) != list.size() - 1) {
-            int pos = map.get(val);
-            int lastVal = list.get(list.size() - 1);
-            list.set(pos, lastVal);
-            map.put(lastVal, pos);
-        }
+        if (!map.containsKey(val)) return false;
+        int pos = map.get(val);
+        int last = list.get(list.size() - 1);
+        map.put(last, pos); //注意这里面list和map的remove都应该在set之后，因为可能只有一个数，list就没办法set了，因为为空
+        map.remove(val);
+        list.set(pos, last);
         list.remove(list.size() - 1);
         return true;
-        //这里如果直接删除val的位置，后面的位置都会改变，所以先把最后一个数放到要删去数的位置，再删去最后一个即可
     }
     
     /** Get a random element from the set. */
     public int getRandom() {
-        Random rand = new Random();
         int index = rand.nextInt(list.size());
         return list.get(index);
     }
 }
+
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * RandomizedSet obj = new RandomizedSet();
+ * boolean param_1 = obj.insert(val);
+ * boolean param_2 = obj.remove(val);
+ * int param_3 = obj.getRandom();
+ */
