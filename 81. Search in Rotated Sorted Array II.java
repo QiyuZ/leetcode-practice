@@ -1,24 +1,49 @@
 class Solution {
-    public boolean search(int[] nums, int target) { //注意只能是  先降后升或者先升后降
+    public boolean search(int[] nums, int target) {
         if (nums == null || nums.length == 0) return false;
-        int start = 0, end = nums.length - 1;
-        while (start + 1 < end) { //三种情况
-            int mid = start + (end - start) / 2;
+        int l = 0, r = nums.length - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
             if (nums[mid] == target) return true;
-            if (nums[mid] == nums[start] && nums[mid] == nums[end]) { //左右中三者相等无法判断先降后升还是先升后降，各缩小一步范围
-                start++;
-                end--;
-            } else if (nums[mid] >= nums[start]) { //先升后降
-                if (target >= nums[start] && target <= nums[mid]) end = mid; //如果target再升中，就不用考虑后半段
-                else start = mid; //反之不考虑前面的
-            } else {//先降后升，同理
-                if (target >= nums[mid] && target <= nums[end]) start = mid; 
-                else end = mid;
-            }
+            else if (nums[mid] == nums[l]) l++;
+            else if (nums[mid] == nums[r]) r--;
+            else if (nums[l] <= target && target <= nums[mid]) r = mid;
+            else if (nums[mid] <= target && target <= nums[r]) l = mid + 1;
+            else if (nums[l] > nums[mid]) r = mid; //6001225
+            else l = mid + 1; //2256001
         }
-        if (nums[start] == target) return true;
-        if (nums[end] == target) return true;
         return false;
     }
 }
-//注意规范二分法写法
+
+class Solution {
+    public boolean search(int[] nums, int target) {
+        int start = 0, end = nums.length - 1, mid = -1;
+        while(start <= end) {
+            mid = (start + end) / 2;
+            if (nums[mid] == target) {
+                return true;
+            }
+            //If we know for sure right side is sorted or left side is unsorted
+            if (nums[mid] < nums[end] || nums[mid] < nums[start]) {
+                if (target > nums[mid] && target <= nums[end]) {
+                    start = mid + 1;
+                } else {
+                    end = mid - 1;
+                }
+            //If we know for sure left side is sorted or right side is unsorted
+            } else if (nums[mid] > nums[start] || nums[mid] > nums[end]) {
+                if (target < nums[mid] && target >= nums[start]) {
+                    end = mid - 1;
+                } else {
+                    start = mid + 1;
+                }
+            //If we get here, that means nums[start] == nums[mid] == nums[end], then shifting out
+            //any of the two sides won't change the result but can help remove duplicate from
+            //consideration, here we just use end-- but left++ works too
+            } else start ++;
+        }
+        
+        return false;
+    }
+}
