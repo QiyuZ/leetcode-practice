@@ -36,3 +36,22 @@ public class Solution {
         return res.next;
     }
 }
+
+//use map
+public class Solution {
+    public RandomListNode copyRandomList(RandomListNode head) {
+        if (head == null) return head;
+        Map<RandomListNode, RandomListNode> map = new HashMap<>();
+        RandomListNode cur = head;
+        while (cur != null) {
+            map.put(cur, new RandomListNode(cur.label));
+            cur = cur.next;
+        }
+        for (RandomListNode r : map.keySet()) {
+            RandomListNode newNode = map.get(r);
+            newNode.next = map.get(r.next);
+            newNode.random = map.get(r.random);
+        }
+        return map.get(head);
+    }
+}
