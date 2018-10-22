@@ -19,3 +19,41 @@ class Solution {
         return res;
     }
 }
+
+
+//union find
+class Solution {
+    public List<Integer> killProcess(List<Integer> pid, List<Integer> ppid, int kill) {
+        int max = 0;
+        for (int p: pid) { //最大的一定在pid中，因为即使是root也在pid中有
+            max = Math.max(p, max);
+        }
+        int[] parent = new int[max + 1];
+        for (int i = 0; i < parent.length; i++) { //初始化
+            parent[i] = i;
+        }
+        for (int i = 0; i < pid.size(); i++) {
+            int p = pid.get(i);
+            int pp = ppid.get(i);
+            if(p == kill) continue; //把kill作为parent
+            int f1 = find(parent, p);
+            int f2 = find(parent, pp);
+            if (f1 != f2) { //两个应该是一样的
+                parent[p] = pp;
+            }
+        }
+        
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < parent.length; i++) {
+            if (find(parent, i) == kill) {
+                list.add(i);
+            }
+        }
+        return list;
+    }
+    
+    private int find(int[] parent, int node) {
+        if (parent[node] == node) return node;
+        return find(parent, parent[node]);
+    }
+}
