@@ -1,0 +1,20 @@
+public class Solution {
+    public void connect(TreeLinkNode root) { //level order
+        while (root != null) {
+            TreeLinkNode dummy = new TreeLinkNode(0);
+            TreeLinkNode temp = dummy; //每层的头结点
+            while (root != null) {
+                if (root.left != null) { //联通头结点和left
+                    temp.next = root.left;
+                    temp = temp.next;
+                }
+                if (root.right != null) { //左右连通
+                    temp.next = root.right;
+                    temp = temp.next;
+                }
+                root = root.next; //因为是层次遍历，所以要去下一个child（如果有）
+            }
+            root = dummy.next; //开始下一层，因为第一个是0，所以直接.next
+        }
+    }
+}
