@@ -10,23 +10,14 @@
 class Solution {
     public int minMeetingRooms(Interval[] intervals) {
         if (intervals == null || intervals.length == 0) return 0;
-        Arrays.sort(intervals, new Comparator<Interval>() {
-            public int compare(Interval o1, Interval o2) {
-                return o1.start - o2.start;
-            }
-        });
-        PriorityQueue<Interval> queue = new PriorityQueue<>(new Comparator<Interval>() {
-            public int compare(Interval o1, Interval o2) {
-                return o1.end - o2.end;
-            }
-        });
+        Arrays.sort(intervals, (a, b) -> {return a.start - b.start;});
+        PriorityQueue<Interval> queue = new PriorityQueue<>((a, b) -> {return a.end - b.end;});
         queue.offer(intervals[0]);
         for (int i = 1; i < intervals.length; i++) {
             Interval cur = queue.poll();
-            if (intervals[i].start >= cur.end) cur.end = intervals[i].end; //2,4  4,7有time gap可以一间room就把这两个合并
-            //因为此处要比较cur.end，所以queue要排列end 距离[[4,9],[4,17],[9,10]]
-            else queue.offer(intervals[i]);
-            queue.offer(cur);
+            if (cur.end <= intervals[i].start) cur.end = intervals[i].end; //可以合并的
+            else queue.offer(intervals[i]); //不能合并的加进去
+            queue.offer(cur); //之前去除的放回去
         }
         return queue.size();
     }
