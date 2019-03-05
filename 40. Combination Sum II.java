@@ -10,9 +10,11 @@ class Solution {
             result.add(new ArrayList<>(currList));
             return;
         }
-        if(start == candidates.length || target < candidates[start]) return ;
+        if(start == candidates.length || target < candidates[start]) return;
         int idx = start + 1, num = candidates[start];
-        while(idx < candidates.length && candidates[idx] == num) idx++; // get the index of the next distinct candidate
+        while(idx < candidates.length && candidates[idx] == num) idx++; 
+        // get the index of the next distinct candidate
+        //因为不可以重复使用但是有可能有几个一样的，所以要把若干个相同的作为一个处理
         // case 1: do not use `num`
         backtrack(candidates, idx, target, currList);
         // case 2: use `num`
