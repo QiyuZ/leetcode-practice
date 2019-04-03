@@ -24,3 +24,8 @@ class Solution extends SolBase {
         }
     }
 }
+
+/*
+For rand10(), every number should has the probability of 1/10. And 1/10 could be seen as (1/2) * (1/5) . That means get a number which could be 5 or 0 with pro (1/2). And a number b range from 1 to 5 with pro (1/5).
+And that's why we use while (a === 7) and while (b > 5 )
+*/
