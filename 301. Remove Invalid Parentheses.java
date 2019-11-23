@@ -1,35 +1,78 @@
+// class Solution {
+//     public List<String> removeInvalidParentheses(String s) {
+//         List<String> res = new ArrayList<>();
+//         if (s == null) return res;
+//         Queue<String> queue = new LinkedList<>();
+//         Set<String> visited = new HashSet<>();
+//         queue.offer(s);
+//         visited.add(s);
+//         boolean found = false;
+//         while (!queue.isEmpty()) {
+//             String cur = queue.poll();
+//             if (isValid(cur)) {
+//                 res.add(cur);
+//                 found = true;
+//             }
+//             if (found) continue; //保证最小的长度
+//             for (int i = 0; i < cur.length(); i++) {
+//                 char c = cur.charAt(i);
+//                 if (c != '(' && c != ')') continue;
+//                 String next = cur.substring(0, i) + cur.substring(i + 1);
+//                 if (visited.add(next)) queue.offer(next);
+//             }
+//         }
+//         return res;
+//     }
+    
+//     private boolean isValid(String cur) {
+//         int count = 0;
+//         for (char c : cur.toCharArray()) {
+//             if (c == '(') count++;
+//             else if (c == ')') count--;
+//             if (count < 0) return false;
+//         }
+//         return count == 0;
+//     }
+// }
+
 class Solution {
-    public static List<String> removeInvalidParentheses(String s) {
+    public List<String> removeInvalidParentheses(String s) {
         List<String> res = new ArrayList<>();
-        char[] check = new char[]{'(', ')'}; //第一个是要保留的，第二个是要删的
-        dfs(s, res, check, 0, 0);
-        return res;
-    }
-
-    public static void dfs(String s, List<String> res, char[] check, int last_i, int last_j) {
-        int count = 0;
-        int i = last_i;
-        while (i < s.length() && count>= 0) { //找到第一个要删的地方
-            if (s.charAt(i) == check[0]) count++;
-            if (s.charAt(i) == check[1]) count--;
-            i++;
-        }
-
-        if (count >= 0)  { //如果count走完还>=0说明没有多余的要删的 ）
-            String reversed = new StringBuffer(s).reverse().toString(); //不用重复写一遍，现在要删除的是(, 只需要翻转字符串和check,可以重复利用方法
-            if (check[0] == '(') dfs(reversed, res, new char[]{')', '('}, 0, 0);
-            else res.add(reversed); //如果是）说明之前已经翻转过，可直接加入
-
-        }
-
-        else {  // extra ')' is detected and we have to do something
-            i -= 1; // 'i-1' is the index of abnormal ')' which makes count<0
-            for (int j = last_j; j<= i; j++) {
-                if (s.charAt(j) == check[1] && (j == last_j || s.charAt(j-1) != check[1])) { //删除第一个不正常的
-                    //                          是第一个 或者之前的不等于， 比如()a) 这个时候可以删两遍
-                    dfs(s.substring(0, j) + s.substring(j+1, s.length()), res, check, i, j);
-                }
+        if (s == null) return res;
+        int left = 0, right = 0;
+        for (char c : s.toCharArray()) {
+            if (c == '(') left++;
+            else if (c == ')') {
+                if (left > 0) left--; //要先看能不能抵消掉
+                else right++;
             }
         }
+        dfs(s, 0, left, right, res);
+        return res;
     }
+    
+    private void dfs(String s, int index, int left, int right, List<String> res) {
+        if (left == 0 && right == 0 && isValid(s)) { //要检查比如)(就不行
+            res.add(s);
+            return;
+        } 
+        for (int i = index; i < s.length(); i++) {
+            if (i != index && s.charAt(i) == s.charAt(i - 1)) continue;
+            else if (left > 0 && s.charAt(i) == '(') dfs(s.substring(0, i) + s.substring(i + 1), i, left - 1, right, res);
+            else if (right > 0 && s.charAt(i) == ')') dfs(s.substring(0, i) + s.substring(i + 1), i, left, right - 1, res);
+        }
+    }
+    
+    private boolean isValid(String cur) {
+        int count = 0;
+        for (char c : cur.toCharArray()) {
+            if (c == '(') count++;
+            else if (c == ')') count--;
+            if (count < 0) return false;
+        }
+        return count == 0;
+    }
+    
+    
+    
 }
