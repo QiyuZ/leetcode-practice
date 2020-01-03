@@ -1,28 +1,27 @@
 class MedianFinder {
-    PriorityQueue<Integer> descend;
-    PriorityQueue<Integer> ascend;
-    boolean even = true;
+     
+    PriorityQueue<Integer> formerDecr, laterIncre;
+    int count;
     /** initialize your data structure here. */
     public MedianFinder() {
-        ascend = new PriorityQueue<>();
-        descend = new PriorityQueue<>((a, b) -> (b - a));
+        formerDecr = new PriorityQueue<>((a, b) -> (b - a));
+        laterIncre = new PriorityQueue<>();
+        count = 0;
     }
     
     public void addNum(int num) {
-        if (even) { //even表示两个一样多，我们要让descend多一个，所以先放ascend再放入descend，反之同理
-            ascend.offer(num);
-            descend.offer(ascend.poll());
+        if (count % 2 == 0) {//因为奇数个数时要让formerDecr多一个，peek是med，所以起始状态最终是放在formerDecr里面
+            laterIncre.offer(num); //大的里面挑小的放入小堆，这样才能保证两个queue是从中间断开的
+            formerDecr.offer(laterIncre.poll());
         } else {
-            descend.offer(num);
-            ascend.offer(descend.poll());
+            formerDecr.offer(num); //小的里面挑大的放入大堆
+            laterIncre.offer(formerDecr.poll());
         }
-        even = !even;
+        count++;
     }
     
     public double findMedian() {
-        if (descend.size() > ascend.size()) return (double)descend.peek();
-        double sum = (double)(descend.peek() + ascend.peek());
-        return sum / 2;
+        return count % 2 == 1 ? (double)formerDecr.peek() : (double)(formerDecr.peek() + laterIncre.peek()) / 2.0;
     }
 }
 
