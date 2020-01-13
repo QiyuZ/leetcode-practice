@@ -1,11 +1,11 @@
 class RandomizedSet {
+    Random rand;
     List<Integer> list;
     Map<Integer, Integer> map;
-    Random rand;
     /** Initialize your data structure here. */
     public RandomizedSet() {
-        list = new ArrayList<>();
         map = new HashMap<>();
+        list = new ArrayList<>();
         rand = new Random();
     }
     
@@ -20,12 +20,17 @@ class RandomizedSet {
     /** Removes a value from the set. Returns true if the set contained the specified element. */
     public boolean remove(int val) {
         if (!map.containsKey(val)) return false;
-        int pos = map.get(val);
+        int index = map.get(val);
+        if (index == list.size() - 1) {
+            map.remove(val);
+            list.remove(list.size() - 1);
+            return true;
+        }
         int last = list.get(list.size() - 1);
-        map.put(last, pos); //注意这里面list和map的remove都应该在set之后，因为可能只有一个数，list就没办法set了，因为为空
+        list.set(index, last); //注意用set不用add，add会多加
+        list.remove(list.size() - 1); //remove是index如果要元素并且是数字要list.remove(Integer.valueOf(last));
+        map.put(last, index);
         map.remove(val);
-        list.set(pos, last);
-        list.remove(list.size() - 1);
         return true;
     }
     
