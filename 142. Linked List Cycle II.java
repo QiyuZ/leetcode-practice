@@ -12,19 +12,26 @@
 public class Solution {
     public ListNode detectCycle(ListNode head) {
         if (head == null || head.next == null) return null;
-        ListNode slow = head, fast = head;
+        ListNode fast = head, slow = head;
+        boolean hasCycle = false;
         while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
             if (slow == fast) {
-                ListNode s2 = head;
-                while (slow != s2) {
-                    s2 = s2.next;
-                    slow = slow.next;
-                }
-                return slow;
+                hasCycle = true;
+                break;
             }
         }
-        return null;
+        if (!hasCycle) return null;
+        fast = head;
+        while (fast != slow) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
     }
 }
+/**
+head - begin of cycle = A, begin of cycle - meet point = B, meet point - begin of cycle = C
+A+B+C+B = 2(A+B) => fast是slow两倍 A = C 
+**/
