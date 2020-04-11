@@ -23,12 +23,13 @@ class Solution {
 
 class Solution {
     public ListNode middleNode(ListNode head) {
-        ListNode slow = head;
-        ListNode fast = head;
-        while(fast != null && fast.next != null){ //因为fast直接两个next所以要判断第一个next是不是null
+        if (head == null) return head;
+        ListNode slow = head, fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            fast = fast.next.next;
             slow = slow.next;
-            fast = fast.next.next;  
         }
+        if (fast.next != null) slow = slow.next; //说明两个middle,取后面的
         return slow;
     }
 }
