@@ -1,22 +1,22 @@
 class Solution {
-    public boolean checkValidString(String s) {
-        if (s == null || s.length() == 0) return true;
-        int low = 0, high = 0;
+    public boolean checkValidString(String s) { //因为*导致数量可变，那么用range来记录
+        if (s.isEmpty()) return true;
+        int min = 0, max = 0; //代表左括号的相对个数，如果区间是0到某个数则说明可以
         for (char c : s.toCharArray()) {
-            if (c == '(') {
-                high++;
-                low++;
+            if (c == '(') { //左右括号是固定的，所以一定都是++和下面的--
+                min++;
+                max++;
             } else if (c == ')') {
-                if (low > 0) low--;
-                high--;
-            } else if (c == '*') {
-                if (low > 0) low--;
-                high++;
+                min--;
+                max--;
+            } else if (c == '*') {//min认为是右，max认为是左
+                min--;
+                max++;
             }
-            if (high < 0) return false;
+            if (max < 0) return false; //max已经是让左括号尽量多了，如果还小于0则肯定不行
+            //这步是必须的因为要防止")("的情况，不能只看最后范围内有没有0
+            min = Math.max(0, min); //因为min可能小于0 ，此时max>0所以可以把min调到0，因为最后答案有一个0即可
         }
-        return low == 0;
+        return min == 0; 
     }
 }
-//其中low表示在有左括号的情况下，将星号当作右括号时括号的相对个数(这样做的原因是尽量不多增加右括号的个数)，
-//而high表示将星号当作左括号时括号的相对个数。
