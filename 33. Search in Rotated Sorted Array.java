@@ -5,8 +5,9 @@ class Solution {
         while (start + 1 < end) {
             int mid = (end - start) / 2 + start;
             if (nums[mid] == target) return mid;
-            if (nums[mid] > nums[start]) {
-                if (target >= nums[start] && target <= nums[mid]) end = mid;
+            //这里要大于等于因为可能是同一个，比如[3,1] target=3
+            if (nums[mid] > nums[start]) {//在左区间
+                if (target >= nums[start] && target <= nums[mid]) end = mid;//左区间里
                 else start = mid;
             } else {
                 if (target >= nums[mid] && target <= nums[end]) start = mid;
