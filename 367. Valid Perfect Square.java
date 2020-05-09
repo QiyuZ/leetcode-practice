@@ -1,16 +1,15 @@
 class Solution {
     public boolean isPerfectSquare(int num) {
-        return findPerfectSquare(num,0,num);
-    }
-    
-    public boolean findPerfectSquare(int num,int low,int high){
-        if(low > high) return false;
-        if(low == high) return low == num / (double)low;
-        int mid = low + (high - low) / 2;
-        if(mid == num / (double)mid) return true;
-        else if(mid < num / (double)mid) return findPerfectSquare(num,mid + 1,high);
-        else return findPerfectSquare(num,low,mid - 1);
-        
-        
+        if (num == 0) return false;
+        if (num == 1) return true;
+        int l = 1, r = num / 2 + 1;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            long multi = (long)mid * mid; //可能越界要用long
+            if (multi == (long)num) return true;
+            else if (multi > (long)num) r = mid;
+            else l = mid + 1;
+        }
+        return (long)l * l == (long)num;
     }
 }
