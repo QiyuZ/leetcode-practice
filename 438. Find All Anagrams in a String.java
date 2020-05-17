@@ -22,50 +22,25 @@ class Solution {
     }
 }
 
-public class Solution {
-    public List<Integer> findAnagrams(String s, String p) {
-        List<Integer> list = new ArrayList<>();
-        if (s == null || s.length() == 0 || p == null || p.length() == 0) return list;
-
-        int[] hash = new int[256]; //character hash
-
-        //record each character in p to hash
-        for (char c : p.toCharArray()) {
-            hash[c]++;
-        }
-        //two points, initialize count to p's length
-        int left = 0, right = 0, count = p.length();
-
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {//sliding window
+        List<Integer> res = new ArrayList<>();
+        if (s == null || s.isEmpty()) return res;
+        int[] record = new int[256];
+        for (char c : p.toCharArray()) record[c]++;
+        int left = 0, right = 0, count = 0;
         while (right < s.length()) {
-            //move right everytime, if the character exists in p's hash, decrease the count
-            //current hash value >= 1 means the character is existing in p
-            if (hash[s.charAt(right)] >= 1) {
-                count--;
-            }
-            hash[s.charAt(right)]--;
+            if (record[s.charAt(right)] > 0) count++;//遇到target,count加
+            record[s.charAt(right)]--;//无论什么情况都要变record和移动right指针
             right++;
-
-            //when the count is down to 0, means we found the right anagram
-            //then add window's left to result list
-            if (count == 0) {
-                list.add(left);
-            }
-            //if we find the window's size equals to p, then we have to move left (narrow the window) to find the new match window
-            //++ to reset the hash because we kicked out the left
-            //only increase the count if the character is in p
-            //the count >= 0 indicate it was original in the hash, cuz it won't go below 0
-            if (right - left == p.length() ) {
-
-                if (hash[s.charAt(left)] >= 0) {
-                    count++;
-                }
-                hash[s.charAt(left)]++;
+            //注意此时right已经移动过，所以不用+1=p长度，right - left == p.length()可以不写，因为下面的每次会检查长度
+            if (right - left == p.length() && count == p.length()) res.add(left);
+            if (right - left == p.length()) { //只有超过长度的时候才移动left,使其一直保持p.length长度
+                if (record[s.charAt(left)] >= 0) count--;
+                record[s.charAt(left)]++;
                 left++;
-
             }
-
-
         }
-        return list;
+        return res;
     }
 }
