@@ -1,14 +1,24 @@
 class StockSpanner {
-    Stack<int[]> stack; //局部最大价格，局部范围的大小
+    private Stack<Stock> stack; //monotonic stack
+    private int count;
     public StockSpanner() {
         stack = new Stack<>();
+        count = 1;
+    }
+    //经典算法：单调栈 不用保存之前所有的元素，只留下比当前大的就行，因为比当前小的总会持续进栈出栈，没有必要
+    public int next(int price) {
+        while (!stack.isEmpty() && stack.peek().num <= price) stack.pop();
+        int res = stack.isEmpty() ? count : count - stack.peek().day;
+        stack.push(new Stock(count++, price));
+        return res;
     }
     
-    public int next(int price) {
-        int count = 1;
-        while (!stack.isEmpty() && stack.peek()[0] <= price) count += stack.pop()[1]; //比如70， 60， 80 要用while往前一直找符合条件的
-        stack.push(new int[] {price, count});
-        return count;
+    class Stock {
+        private int day, num;
+        public Stock(int day, int num) {
+            this.day = day;
+            this.num = num;
+        }
     }
 }
 
