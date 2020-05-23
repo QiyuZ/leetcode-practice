@@ -1,5 +1,5 @@
 class Solution {
-    public String frequencySort(String s) { //same as 347 PriorityQueueO(nlogm) bucket sort logn
+    public String frequencySort(String s) { //same as 347 PriorityQueueO(nlogm) bucket sort O(n)
         Map<Character, Integer> map = new HashMap<>();
         for (char c : s.toCharArray()) map.put(c, map.getOrDefault(c, 0) + 1);
         List<Character>[] list = new ArrayList[s.length() + 1]; //最长可以全是相同的所以+1
