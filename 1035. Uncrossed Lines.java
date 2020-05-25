@@ -1,5 +1,5 @@
 class Solution {
-    public int maxUncrossedLines(int[] A, int[] B) { //same as edit distance
+    public int maxUncrossedLines(int[] A, int[] B) { //其实转换问题就是不能交叉，1143. Longest Common Subsequence and same as edit distance and
         int m = A.length, n = B.length;
         int[][] dp = new int[m + 1][n + 1];
         for (int i = 1; i <= m; i++) {
