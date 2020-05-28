@@ -1,25 +1,29 @@
 class Solution {
-    public boolean possibleBipartition(int N, int[][] dislikes) { //二分图，染色法
-        if (dislikes.length == 0) return true;
-        int[] color = new int[N + 1];//because start from 1
-        List<List<Integer>> list = new ArrayList<>();
-        for (int i = 0; i <= N; i++) list.add(new ArrayList<>());
-        for (int[] dis : dislikes) {
-            list.get(dis[0]).add(dis[1]); //前后都要相互连接
-            list.get(dis[1]).add(dis[0]);
+    public boolean possibleBipartition(int N, int[][] dislikes) { //same as 785 O(e + v) 节点数+边数
+        if (dislikes == null || dislikes.length == 0) return true;
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        for (int[] d : dislikes) { //form graph
+            if (!map.containsKey(d[0])) map.put(d[0], new ArrayList<>());
+            if (!map.containsKey(d[1])) map.put(d[1], new ArrayList<>());
+            map.get(d[0]).add(d[1]);
+            map.get(d[1]).add(d[0]);
         }
+        int[] color = new int[N + 1];
         for (int i = 1; i <= N; i++) {
-            if (color[i] != 0) continue;
-            color[i] = 1; //默认为组1，因为如果是0说明和前面都没有任何联系
-            Queue<Integer> q = new LinkedList<>();
-            q.add(i);
-            while(!q.isEmpty()) {
-                int cur = q.poll();
-                for(int nb : list.get(cur)) {
-                    if(color[nb] == 0) {
-                        color[nb] = color[cur] == 1 ? 2 : 1;
-                        q.add(nb);
-                    } else if(color[nb] == color[cur]) return false;
+            if (color[i] != 0) continue; //已经染色
+            Queue<Integer> queue = new LinkedList<>();
+            queue.offer(i);
+            color[i] = 1; //分为1，-1，默认为1
+            while (!queue.isEmpty()) {
+                int cur = queue.poll();
+                if (!map.containsKey(cur)) continue;
+                for (int next : map.get(cur)) {
+                    if (color[next] == -color[cur]) continue;//已经分过了，skip
+                    else if (color[next] == color[cur]) return false; //dislike不能一个颜色
+                    else if (color[next] == 0) {  //还未染色则染色相反并加入queue
+                        color[next] = -color[cur];
+                        queue.offer(next);
+                    }
                 }
             }
         }
