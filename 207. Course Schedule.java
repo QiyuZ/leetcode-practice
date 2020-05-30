@@ -1,31 +1,25 @@
 class Solution {
-    public boolean canFinish(int numCourses, int[][] prerequisites) {
-        int[] degree = new int[numCourses];
-        ArrayList[] graph = new ArrayList[numCourses]; //构建图
+    public boolean canFinish(int numCourses, int[][] prerequisites) { //Topological sort
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        int[] indegree = new int[numCourses];
+        for (int[] p : prerequisites) {
+            if (!map.containsKey(p[1])) map.put(p[1], new ArrayList<>());
+            map.get(p[1]).add(p[0]);
+            indegree[p[0]]++; //入度+1，入度为0的即为初始点(可能多个)
+        }
         Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < indegree.length; i++) {
+            if (indegree[i] == 0) queue.offer(i);//可能多个，比如3个但是关系只有[0, 1]
+        }
         int count = 0;
-        for (int i = 0; i < numCourses; i++) graph[i] = new ArrayList<Integer>();
-        for (int i = 0; i < prerequisites.length; i++) {
-            graph[prerequisites[i][0]].add(prerequisites[i][1]);
-            degree[prerequisites[i][1]]++; //记录入度
-        }
-        for (int i = 0; i < numCourses; i++) {
-            if (degree[i] == 0) { //入度是0 的是起点。放入队列，别忘了记录count
-                queue.offer(i);
-                count++;
-            } 
-        }
         while (!queue.isEmpty()) {
-            int course = (int)queue.poll();
-            for (int i = 0; i < graph[course].size(); i++) {
-                int pointer = (int)graph[course].get(i);
-                if (--degree[pointer] == 0) {
-                    queue.offer(pointer); //减去这条边后入度为0 的是新的起点
-                    count++;
-                }     
+            int cur = queue.poll();
+            count++;
+            if (!map.containsKey(cur)) continue;
+            for (int next : map.get(cur)) {
+                if (--indegree[next] == 0) queue.offer(next);
             }
         }
-        if (count == numCourses) return true;
-        return false;
+        return count == numCourses; //有没count的说明形成了环indegree不能变为0
     }
 }
