@@ -1,13 +1,9 @@
 class Solution {
     public int[][] reconstructQueue(int[][] people) {
-        if (people == null || people.length == 0) return people;
-        Arrays.sort(people, new Comparator<int[]>() {
-            public int compare(int[] o1, int[] o2) {
-                return o1[0] != o2[0] ? o2[0] - o1[0] : o1[1] - o2[1];
-            }
-        });
+         Arrays.sort(people, (a, b) -> (a[0] == b[0] ? a[1] - b[1] : b[0] - a[0]));//高的在前面，排位低的在前面
         List<int[]> res = new ArrayList<>();
-        for (int[] p : people) res.add(p[1], p); //这个厉害了，因为先插入的是高的，所以这里可以直接排入后面的
+        for (int[] p : people) res.add(p[1], p);
+        //这样插入时，先插高的没人在他前面，这样后面的可直接插入相应位置；如果先处理低的，他绝对位置会一直动
         return res.toArray(new int[people.length][2]);
     }
 }
