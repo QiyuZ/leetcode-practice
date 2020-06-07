@@ -11,3 +11,10 @@ class Solution {
         return dp[amount];
     }
 }
+/**
+* The reason why we cannot change the order of loop is:
+*
+* When looping coins first, we are always appending a new coin type (or not) to previous combination of coins(for * a smaller target number), since previous combination is always unique, appending a new type of coins will make * the combination still unique. We are always considering the different coin type in next loop.
+* When looping amount first, it will happen the following scenario:
+* If we want to get amount of 8, we can append 3 and append 5, also we can append 5 and append 3 to achieve it. * * In this way, we use the two coin(3 and 5) in different way, but the same number (one for each). We will keep * * considering the previous type of coin when the amount is increasing.
+*/
