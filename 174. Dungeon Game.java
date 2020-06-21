@@ -1,21 +1,19 @@
 class Solution {
-    public int calculateMinimumHP(int[][] dungeon) {
-        if (dungeon == null || dungeon.length == 0) return 0;
+    public int calculateMinimumHP(int[][] dungeon) {//从后到前看最少损失多少health,不能从前到后因为不知道未来的cost
+        if (dungeon == null || dungeon.length == 0 || dungeon[0].length == 0) return 1;
         int m = dungeon.length, n = dungeon[0].length;
-        int[][] dp = new int[m][n];  //表示减去/加上val之前的生命值
-        dp[m - 1][n - 1] = Math.max(1, 1 - dungeon[m - 1][n - 1]); 
-        //最后一个的生命值至少为1或者是比它大1的数，比如例子中-5，就是6
-        //因为最后一个可能是正数，所以不用很大的正数，只有是1就可以了
-        for (int i = n - 2; i >= 0; i--) dp[m - 1][i] = Math.max(1, dp[m - 1][i + 1] - dungeon[m - 1][i]);
-        for (int i = m - 2; i >= 0; i--) dp[i][n - 1] = Math.max(1, dp[i + 1][n - 1] - dungeon[i][n - 1]);
-        for (int i = m - 2; i >= 0; i--) {
-            for (int j = n - 2; j >= 0; j--) {
-                int down = Math.max(dp[i + 1][j] - dungeon[i][j], 1);
-                int right = Math.max(dp[i][j + 1] - dungeon[i][j], 1);
-                dp[i][j] += Math.min(down, right);
+        int[][] minRequired = new int[m + 1][n + 1];
+        for (int i = 0; i <= m; i++) minRequired[i][n] = Integer.MAX_VALUE;//边际最大值
+        for (int j = 0; j <= n; j++) minRequired[m][j] = Integer.MAX_VALUE;
+        minRequired[m][n - 1] = 0;//终点的右边和下边标0因为已经是最后一个
+        minRequired[m - 1][n] = 0;
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                int fromPath = Math.min(minRequired[i + 1][j], minRequired[i][j + 1]);//选择一边的最小required
+                minRequired[i][j] = Math.max(fromPath - dungeon[i][j], 0);
+                //这里是减因为是求最小要求的比如0-(-5)=5就是至少要5health,0-5=-5说明不会减少即取0
             }
         }
-        return dp[0][0];
+        return minRequired[0][0] + 1;//以上求的是以0为标准，但是题目要求是>0所以+1
     }
 }
-//通项公式 dp[i][j] = dp[i + 1][j](dp[i][j + 1]) - dungeon[i][j]; 但是有可能是负数，要保证最小为1，所以是找两者最大值
