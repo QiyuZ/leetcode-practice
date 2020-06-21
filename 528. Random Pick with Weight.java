@@ -52,3 +52,4 @@ class Solution {
         return map.get(key);
     }
 }
+//higherKey(key) vs ceilingKey(key) is that the former one does not include the given key which is > key and the latter one means >= key 
