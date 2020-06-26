@@ -16,7 +16,11 @@ class Solution {
         return -1;
     }
 }
-
+//same as 142 linked cycle
+/**
+head - begin of cycle = A, begin of cycle - meet point = B, meet point - begin of cycle = C
+A+B+C+B = 2(A+B) => fast是slow两倍 A = C 
+**/
 
 // class Solution {
 //     public int findDuplicate(int[] nums) {
