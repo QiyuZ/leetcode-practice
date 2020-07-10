@@ -24,25 +24,25 @@ class Solution {
 //iterative
 class Solution {
     public Node flatten(Node head) {
-        if (head == null) return null;
-        Node cur = head;
+        if (head == null) return head;
         Stack<Node> stack = new Stack<>();
-        while (head != null) {
-            if (head.child != null) {
-                Node child = head.child;
-                Node next = head.next;
-                if (next != null) stack.push(next);
-                head.child = null;
-                head.next = child;
-                child.prev = head;
+        Node root = head;
+        while (root != null) {
+            if (root.child != null) {
+                Node next = root.next;
+                Node child = root.child;
+                root.next = child; //注意是双向，要前后都连接
+                child.prev = root;
+                if (next != null) stack.push(next);//非null才push
+                root.child = null; //注意移动完child要标为null
             }
-            if (head.next == null && !stack.isEmpty()) {
+            if (root.next == null && !stack.isEmpty()) {
                 Node next = stack.pop();
-                next.prev = head;
-                head.next = next;
-            } 
-            head = head.next;
+                root.next = next; //连到后面继续遍历
+                next.prev = root;
+            }
+            root = root.next;
         }
-        return cur;
+        return head;
     }
 }
