@@ -30,3 +30,20 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        if(root==null) return result;
+        explore(root, 0, result);
+        return result;
+    }
+    public void explore(TreeNode root, int level, List<List<Integer>> result){
+        if(root==null) return;
+        if(result.size()==level) result.add(new ArrayList<Integer>());
+        if(level%2==0) result.get(level).add(root.val);
+        else result.get(level).add(0, root.val);
+        explore(root.left, level+1, result);
+        explore(root.right, level+1, result);
+    }
+}
