@@ -13,7 +13,7 @@ class Solution {
         // line 7 to line 12 equals to     
         // 1. diff = Integer.highestOneBit(diff);
         // 2. diff &= -diff;
-        for (int num : nums) {
+        for (int num : nums) { //重复的数字因为会两次和diff异或，所以总是0，分到哪组都无所谓
             if ((num & diff) == 0) res[0] ^= num;//等于0则说明是b=1的组
             else res[1] ^= num;
         }
