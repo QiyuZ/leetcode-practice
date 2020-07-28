@@ -1,19 +1,17 @@
 class Solution {
     public int leastInterval(char[] tasks, int n) {
-        if (tasks == null || tasks.length == 0) return 0;
-        if (n == 0) return tasks.length;
-        int[] count = new int[26];
-        int max = 0, cnt = 0;
-        for (char c : tasks) {
-            count[c - 'A']++;
-            max = Math.max(max, count[c - 'A']);
+        if(n == 0) return tasks.length;
+        int[] records = new int[256];
+        for (char task : tasks) records[task - 'A']++;
+        int maxFreq = 0, maxCount = 1;//因为可能有多个task频率相同，所以要找出最多出现的个数， 和有几个最多的
+        for (int record : records) {
+            if (record > maxFreq) {
+                maxFreq = record;
+                maxCount = 1;
+            } else if (record == maxFreq) maxCount++;
         }
-        for (int num : count) {
-            if (num == max) cnt++;
-        }
-        return Math.max(tasks.length, (max - 1) * (n + 1) + cnt); //最长的决定长度
-        //有几个空*(n+自身)+最长的可能不止一个所以要排布在开头（一个）和最后，如下面例子
-        //A、 -> B -> idle -> A -> B -> idle -> A -> B、.  、就是cnt的作用
-        
+        int res = (maxFreq - 1) * (n + 1) + maxCount;
+        //        不算结尾 * 加上最多那个的本身 + 如果有多个个数相同的后面则需要都加上， 比如[A,A,A,B,B,B]
+        return res < tasks.length ? tasks.length : res;
     }
 }
