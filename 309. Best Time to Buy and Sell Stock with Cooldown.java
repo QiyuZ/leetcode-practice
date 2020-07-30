@@ -32,3 +32,36 @@ class Solution {
         return sell;
     }
 }
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices == null || prices.length == 0) return 0;
+        int len = prices.length;
+        int[] held = new int[len], sold = new int[len], cooldown = new int[len];//state machince
+        held[0] = -prices[0]; //如果第一天买的
+        sold[0] = Integer.MIN_VALUE;
+        for (int i = 1; i < prices.length; i++) {
+            cooldown[i] = Math.max(cooldown[i - 1], sold[i - 1]); //可以之前cooldown接着cooldown,或者是昨天sell了
+            held[i] = Math.max(held[i - 1], cooldown[i - 1] - prices[i]);//可以之前买了今天不买，或者cooldown完买
+            sold[i] = held[i - 1] + prices[i];//因为今天卖了，所以是price - held (此处held都是负数)
+
+        }
+        return Math.max(sold[len - 1], cooldown[len - 1]);//不会held比，因为最后一天手里没stock，有就是亏钱的
+    }
+}
+
+//state machine 三种状态 check solution for details
+//held(可以cooldown自循环即等待不卖) ---sell---> sold ---cooldown--> cooldown(可以自循环cooldown不买) --buy-->held  循环
+
+class Solution { //上面可以看出最多只需要两天的即可所以不用数组
+  public int maxProfit(int[] prices) {
+    int sold = Integer.MIN_VALUE, held = Integer.MIN_VALUE, reset = 0;
+    for (int price : prices) {
+      int preSold = sold;
+      sold = held + price;
+      held = Math.max(held, reset - price);
+      reset = Math.max(reset, preSold);
+    }
+    return Math.max(sold, reset);
+  }
+}
