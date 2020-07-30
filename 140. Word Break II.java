@@ -8,7 +8,7 @@ class Solution {
         for (int i = 0; i < s.length(); i++) {
             String t = s.substring(i);
             if (wordDict.contains(t)) {
-                List<String> temp = wordBreak(s.substring(0, i), wordDict);
+                List<String> temp = wordBreak(s.substring(0, i), wordDict); //不可以颠倒substring(i),从小的开始，bottom from top dp
                 if (temp.size() != 0) {
                     for (String str : temp) res.add(str + " " + t);
                 }
