@@ -12,7 +12,7 @@ class Solution {
         int res = map.getOrDefault(cur - target, 0);//See if there is a subarray sum equals to target
         map.put(cur, map.getOrDefault(cur, 0) + 1);
         res += helper(node.left, target, cur) + helper(node.right, target, cur);
-        map.put(cur, map.get(cur) - 1);//Remove the current node so it wont affect other path
+        map.put(cur, map.get(cur) - 1);//Remove the current node so it wont affect other path, 因为只能往下选一边，如果不remove会左右子树都选上
         return res;
     }
 }
