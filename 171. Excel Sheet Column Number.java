@@ -1,4 +1,4 @@
-class Solution {
+class Solution { //base - 26
     public int titleToNumber(String s) {
         if (s == null || s.length() == 0) return 0;
         int res = 0, count = 0;
