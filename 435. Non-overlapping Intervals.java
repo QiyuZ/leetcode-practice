@@ -1,37 +1,16 @@
-/**
- * Definition for an interval.
- * public class Interval {
- *     int start;
- *     int end;
- *     Interval() { start = 0; end = 0; }
- *     Interval(int s, int e) { start = s; end = e; }
- * }
- */
 class Solution {
-    public int eraseOverlapIntervals(Interval[] intervals) {
-        if (intervals.length <= 1) return 0;
-        Arrays.sort(intervals, (a, b) -> (a.end == b.end? a.start - b.start : a.end - b.end));
-        int end = Integer.MIN_VALUE;;
-        int count = 0;
-        for (Interval interval : intervals) {
-            if (interval.start >= end) end = interval.end;
-            else count++;
-        }
-        return count;
-    }
-}
-
-class Solution {
-    public int eraseOverlapIntervals(Interval[] intervals) {
-        if(intervals.length <= 1){return 0;}
-        Arrays.sort(intervals,(a,b)->a.start - b.start);
-        int count = 0;
-        for (int i = 1 ; i < intervals.length;i++){
-            if (intervals[i].start < intervals[i-1].end){
-                intervals[i].end = Math.min(intervals[i].end,intervals[i-1].end);
+    public int eraseOverlapIntervals(int[][] intervals) {
+        if (intervals == null || intervals.length == 0) return 0;
+        Arrays.sort(intervals, (a, b) -> (a[1] - b[1]));//注意要首先sort end，因为end是关键看是否相连
+        int end = intervals[0][1];
+        int count = 1;//起始的首个
+        for (int i = 1; i < intervals.length; i++) {
+            int[] cur = intervals[i];
+            if (cur[0] >= end) {
                 count++;
+                end = cur[1];
             }
         }
-        return count;
+        return intervals.length - count;//减去补集
     }
 }
