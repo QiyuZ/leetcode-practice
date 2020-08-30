@@ -1,27 +1,25 @@
 class Solution {
-    public List<Integer> pancakeSort(int[] A) { 
-        //返回任意成立即可，所以最简单思路，找最大的，放到最后，依次进行；注意不能找最小放在前面因为前面会一直变动，后面不动就考虑后面
-        int m = A.length;
+    public List<Integer> pancakeSort(int[] A) {
         List<Integer> res = new ArrayList<>();
-        while (m > 0) {
-            int i = 0;
-            for (; i < A.length; i++) {
-                if (A[i] == m) break;
-            } 
-            res.add(i + 1); //找到最大
-            reverse(A, 0, i); //最大放在前面
-            reverse(A, 0, m - 1); //再次翻转放到后面
-            res.add(m--);
+        if (A == null || A.length == 0) return res;
+        for (int i = A.length; i > 0; i--) { //注意是A.length从最大的数找，然后把那个数放到最前面再反转到对应的位置，比如首先处理3， 132 -> 312 -> 213
+            if (A[i - 1] == i) continue;
+            int index = A.length - 1;
+            while (A[index] != i) index--;
+            reverse(A, index);
+            res.add(index + 1);
+            reverse(A, i - 1);
+            res.add(i);
         }
         return res;
     }
     
-    private void reverse(int[] A, int i, int j) {
-        while (i < j) {
-            int temp = A[i];
-            A[i] = A[j];
-            A[j] = temp;
-            i++; j--;
+    private void reverse(int[] A, int end) {
+        int start = 0;
+        while (start < end) {
+            int temp = A[start];
+            A[start++] = A[end];
+            A[end--] = temp;
         }
     }
 }
