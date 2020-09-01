@@ -2,7 +2,7 @@ class Solution {
     public TreeNode deleteNode(TreeNode root, int key) {
         if (root == null) return root;
         else if (root.val > key) root.left = deleteNode(root.left, key); //注意不直接return的一定要用else
-        else if (root.val < key) root.right = deleteNode(root.right, key);
+        else if (root.val < key) root.right = deleteNode(root.right, key);//不能直接return否则返回的是子树，要接着递归把子树的target key去掉
         else {                                                           //否则此处，会被多执行一次
             if (root.left == null && root.right == null) return null;
             else if (root.left == null) return root.right;
