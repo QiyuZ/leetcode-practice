@@ -1,15 +1,16 @@
 class Solution {
     public int[][] intervalIntersection(int[][] A, int[][] B) {
         List<int[]> res = new ArrayList<>();
-        int a = 0, b = 0;
-        while (a < A.length && b < B.length) {//题目中说已经sorted了
-            int[] curA = A[a], curB = B[b];
-            int start = Math.max(curA[0], curB[0]);//找重合开头找大的结尾找小的
-            int end = Math.min(curA[1], curB[1]);
-            if (start <= end) res.add(new int[] {start, end});
-            if (curA[1] == end) a++;//哪个在前面就移动哪个，所以可以看取谁的end
-            else b++;
+        int i = 0, j = 0;
+        while (i < A.length && j < B.length) {
+            if (A[i][0] > B[j][1]) j++;//这两行是找到重叠的
+            else if (A[i][1] < B[j][0]) i++;
+            else {
+                int start = Math.max(A[i][0], B[j][0]);
+                if (A[i][1] < B[j][1]) res.add(new int[] {start, A[i++][1]}); //哪个小哪个是end并且移动
+                else res.add(new int[] {start, B[j++][1]});
+            }
         }
-        return res.toArray(new int[res.size()][2]);//list to array 要标注size大小
+        return res.toArray(new int[0][0]);
     }
 }
