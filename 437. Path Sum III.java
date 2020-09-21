@@ -18,6 +18,28 @@ class Solution {
 }
 
 
+class Solution {
+    private int count = 0; //count要global否则recursive back后一直是0
+    public int pathSum(TreeNode root, int sum) {
+        if (root == null) return 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        getPathSum(map, root, sum, 0);
+        return count;
+    }
+    
+    private void getPathSum(Map<Integer, Integer> map, TreeNode root, int sum, int cur) {
+        if (root == null) return;
+        if (map.containsKey(cur + root.val - sum)) count += map.get(cur + root.val - sum);
+        map.put(cur + root.val, map.getOrDefault(cur + root.val, 0) + 1); //这一步要在line 28后面因为可能算上自己，比如root = [1], sum =  0
+        getPathSum(map, root.left, sum, cur + root.val);
+        getPathSum(map, root.right, sum, cur + root.val);
+        if (map.get(cur + root.val) == 1) map.remove(cur + root.val);
+        else map.put(cur + root.val, map.get(cur + root.val) - 1);
+    }
+}
+
+
 public class Solution {
     public int pathSum(TreeNode root, int sum) {
         if (root == null) return 0;
