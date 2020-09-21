@@ -4,28 +4,34 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
     public List<List<Integer>> pathSum(TreeNode root, int sum) {
         List<List<Integer>> res = new ArrayList<>();
         if (root == null) return res;
-        List<Integer> cur = new ArrayList<>();
-        helper(root, sum, res, cur);
+        getPathSum(res, new ArrayList<>(), root, sum, 0);
         return res;
     }
-    public void helper(TreeNode root, int sum, List<List<Integer>> res, List<Integer> cur) {
+    private void getPathSum(List<List<Integer>> res, List<Integer> temp, TreeNode root, int sum, int cur) {
         if (root == null) return;
-        cur.add(root.val);
-        if (root.left == null && root.right == null && sum == root.val) {
-            res.add(new ArrayList<>(cur)); //这里要copy一下，不然recursive里会被reset
-            cur.remove(cur.size() - 1); //注意两处移除，清除同一层的那个
+        if (root.left == null && root.right == null && cur + root.val == sum) {
+            temp.add(root.val);
+            res.add(new ArrayList<>(temp));//这里要copy一下，不然recursive里会被refer
+            temp.remove(temp.size() - 1); //注意此处也要remove否则上次的最后一个会留在这里，或者line 33,34 重新new ArrayList
             return;
-        } else {
-            helper(root.left, sum - root.val, res, cur);
-            helper(root.right, sum - root.val, res, cur);
         }
-        cur.remove(cur.size() - 1);
+        int size = temp.size();
+        temp.add(root.val);
+        getPathSum(res, temp, root.left, sum, cur + root.val);
+        getPathSum(res, temp, root.right, sum, cur + root.val);
+        temp.remove(size);
     }
 }
