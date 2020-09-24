@@ -17,25 +17,25 @@ class Node {
 };
 */
 class Codec {
-
     // Encodes a tree to a single string.
     public String serialize(Node root) {
-        List<String> list = new ArrayList<>();
-        buildString(root, list);
-        return String.join(",", list);
+        if (root == null) return "";
+        StringBuilder sb = new StringBuilder();
+        convertToString(root, sb);
+        sb.setLength(sb.length() - 1); //最后多一个，
+        return sb.toString();
     }
     
-    private void buildString(Node root, List<String> list) {
-        if (root == null) return;
-        list.add(root.val + "");
-        list.add(root.children.size() + ""); //记录size,后面解析的时候只需要循环这么多次，即使是0
-        for (Node child : root.children) buildString(child, list);
+    private void convertToString(Node root, StringBuilder sb) {
+        sb.append(root.val).append(",");
+        sb.append(root.children.size()).append(","); //保持generic即使是0也加上
+        for (Node child : root.children) convertToString(child, sb);
     }
-
+	
     // Decodes your encoded data to tree.
     public Node deserialize(String data) {
-        if (data == null || data.length() == 0) return null;
-        Queue<String> queue = new LinkedList<>(Arrays.asList(data.split(",")));
+        if (data.isEmpty()) return null;
+        Queue<String> queue = new LinkedList<>(Arrays.asList(data.split(","))); //one line add all elements
         return buildNode(queue);
     }
     
@@ -44,9 +44,7 @@ class Codec {
         Node root = new Node(Integer.parseInt(queue.poll()));
         int size = Integer.parseInt(queue.poll());
         root.children = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            root.children.add(buildNode(queue));
-        }
+        for (int i = 0; i < size; i++) root.children.add(buildNode(queue));
         return root;
     }
 }
