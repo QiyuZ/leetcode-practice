@@ -29,6 +29,18 @@ class Solution {
     }
 }
 
+class Solution {
+    private Integer pre = null;
+    public boolean isValidBST(TreeNode root) {
+        if (root == null) return true;
+        if (!isValidBST(root.left)) return false;
+        if (pre != null && root.val <= pre) return false; //注意也不能等于
+        pre = root.val;
+        if (!isValidBST(root.right)) return false;
+        return true;
+    }
+}
+
 //recursive
 class Solution {
     public boolean isValidBST(TreeNode root) {
