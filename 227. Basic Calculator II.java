@@ -24,3 +24,26 @@ class Solution {
         return res;
     }
 }
+
+
+class Solution {
+    public int calculate(String s) {
+        s = s.replace(" ","");
+        int len = s.length();
+        int result = 0, pre = 0, i = 0; char sign='+';
+        while (i < len) {
+            int current = 0;
+            while (i < len && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+                current = current * 10 + s.charAt(i) - '0';
+                i++;
+            }
+            if (sign == '+' || sign == '-') {
+                result += pre;
+                pre = (sign == '+' ? current : -current);
+            } else if (sign == '*') pre *= current;
+            else if (sign == '/') pre /= current;
+            if (i < len) sign = s.charAt(i++);
+        }
+        return result + pre;
+    }
+}
