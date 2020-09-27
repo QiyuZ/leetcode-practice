@@ -1,51 +1,35 @@
 class Solution {
-    public double[] calcEquation(String[][] equations, double[] values, String[][] query) {
-        // use table save string to integer
-        Map<String, Integer> table = new HashMap<>();
-        int len = 0;
-        for (String[] strings : equations)
-            for (String string : strings)
-                if (!table.containsKey(string)) table.put(string, len++);
-
-        // init map by direct equation
-        double[][] map = new double[len][len];
-        for (int i = 0; i < len; ++i)
-            for (int j = 0; j < len; ++j)
-                map[i][j] = (i == j ? 1.0 : Integer.MIN_VALUE);
-        
-        for (int i = 0; i < equations.length; ++i) {
-            String[] keys = equations[i];
-            int row = table.get(keys[0]);
-            int col = table.get(keys[1]);
-            map[row][col] = values[i];
-            map[col][row] = 1 / values[i];
-        }
-
-        // floyd-warshall like algorithm
-        for (int i = 0; i < len; ++i) {
-            for (int j = 0; j < len; ++j) {
-                for (int k = 0; k < len; ++k) {
-                    if (map[j][i] != Integer.MIN_VALUE && map[i][k] != Integer.MIN_VALUE) map[j][k] = map[j][i] * map[i][k];
-                }
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        if (equations.isEmpty() || values == null || values.length == 0 || queries.isEmpty()) return new double[0];
+        Map<String, Map<String, Double>> map = buildGraph(equations, values);
+        double[] res = new double[queries.size()];
+        for (int i = 0; i < queries.size(); i++) res[i] = getResult(map, queries.get(i).get(0), queries.get(i).get(1), new HashSet<>());
+        return res;
+    }
+    
+    private double getResult(Map<String, Map<String, Double>> map, String start, String end, Set<String> visited) {
+        if (!map.containsKey(start)) return -1.0;
+        if (map.get(start).containsKey(end)) return map.get(start).get(end);
+        visited.add(start); //visited来避免重复走路径，这里不用remove，因为比如走到b没有，那么无论什么路径走到b都没有结果，remove只用于探索全部可行路径，此处只要求知道答案
+        for (String key : map.get(start).keySet()) {
+            if (!visited.contains(key)) {
+                double calculation = getResult(map, key, end, visited);
+                if (calculation != -1.0) return map.get(start).get(key) * calculation;//要用当前value乘以计算出来的结果
             }
         }
-        
-        for (int i = 0; i < len; ++i)
-            for (int j = 0; j < len; ++j)
-                if (map[i][j] == Integer.MIN_VALUE)
-                    map[i][j] = -1.0;
-
-        // query now
-        double[] result = new double[query.length];
-        for (int i = 0; i < query.length; ++i) {
-            String[] keys = query[i];
-            Integer row = table.get(keys[0]);
-            Integer col = table.get(keys[1]);
-            if (row == null || col == null) result[i] = -1.0;
-            else result[i] = map[row][col];
+        return -1.0;
+    }
+    
+    private Map<String, Map<String, Double>> buildGraph(List<List<String>> equations, double[] values) {
+        Map<String, Map<String, Double>> map = new HashMap<>();
+        for (int i = 0; i < equations.size(); i++) {
+            String first = equations.get(i).get(0), second = equations.get(i).get(1);
+            double value1 = values[i], value2 = 1.0 / values[i];
+            if (!map.containsKey(first)) map.put(first, new HashMap<>()); //注意要放入a,b; b,a
+            if (!map.containsKey(second)) map.put(second, new HashMap<>());
+            map.get(first).put(second, value1);
+            map.get(second).put(first, value2);
         }
-        return result;
+        return map;
     }
 }
-//思路用数字代表字母并且用二维数组当做结果
-//ac = ab*bc
