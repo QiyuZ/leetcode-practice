@@ -11,3 +11,17 @@ class Solution { //just like gcd
         }
     }
 }
+
+class Solution {
+    public String gcdOfStrings(String str1, String str2) {
+        if (!(str1 + str2).equals(str2 + str1))  return "";
+        int len = getLen(str1.length(), str2.length());
+        return str1.substring(0, len);
+    }
+    
+    private int getLen(int a, int b) {
+        if (b == 0) return a;
+        return getLen(b, a % b);
+    }
+}
+
