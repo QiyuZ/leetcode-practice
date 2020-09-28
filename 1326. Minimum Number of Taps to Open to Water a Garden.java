@@ -24,3 +24,22 @@ class Solution { //same as 1024
         }
     }
 }
+
+
+class Solution {
+    public int minTaps(int n, int[] ranges) {
+        for (int i = 0; i <= n; i++) {
+            int start = Math.max(0, i - ranges[i]), end = Math.min(n, i + ranges[i]);
+            ranges[start] = Math.max(ranges[start], end);
+        }
+        int curEnd = 0, count = 0, reach = 0; //选中一个后，curEnd就是它能触及的最远距离， reach是到达curEnd过程中下次能到达的最远距离
+        for (int i = 0; i < n; i++) {
+            reach = Math.max(reach, ranges[i]);
+            if (i == curEnd) { //当i == curEnd说明本次已经结束，要选择下一次，这是更新成reach
+                count++;
+                curEnd = reach;
+            }
+        }
+        return curEnd == n ? count : -1;
+    }
+}
