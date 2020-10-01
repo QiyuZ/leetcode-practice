@@ -1,30 +1,26 @@
 class Solution {
     public String fractionToDecimal(int numerator, int denominator) {
-        if (numerator == 0) return "0";
-        StringBuilder res = new StringBuilder();
-        res.append((numerator > 0) ^ (denominator > 0) ? "-" : "");
-        long den = Math.abs((long)denominator);
-        long num = Math.abs((long)numerator);
-        res.append(num / den);
-        if (num % den == 0) return res.toString();
-        res.append(".");
-        num %= den;
-        Map<Long, Integer> map = new HashMap<>();
-        map.put(num, res.length()); //记录每个小数位的index，发现相同的（循环）就在那个地方插入（，再在后面插入），就完成了
-        while (num != 0) {
-            num *= 10; //保证得到的是一位数，借位
-            res.append(num / den);
-            num %= den; //其实就是除法思想
-            if (map.containsKey(num)) {
-                res.insert(map.get(num), "(");
-                res.append(")");
+        if (denominator == 0) return "";
+        StringBuilder sb = new StringBuilder();
+        if ((numerator > 0 && denominator < 0) || (numerator < 0 && denominator > 0)) sb.append("-"); //判断正负
+        long a = Math.abs((long)numerator), b = Math.abs((long)denominator);//转换为long防止越界比如-min_value / -1
+        sb.append(a / b);
+        long remainder = a % b;
+        if(remainder == 0) return sb.toString();
+        sb.append(".");
+        Map<Long, Integer> map = new HashMap<>(); //remainder - 潜在的插入左括号位置
+        map.put(remainder, sb.length());
+        while (remainder != 0) { //两个整数相除一定是有限小数或者无限循环小数，不可能无限不循环， 如果remainder可以等于0说明小数有限， 比如1/8
+            remainder *= 10; //想得到小数的一位就相当于乘以10，再除以b取整数部分，再去余数作为下一位的计算来源
+            sb.append(remainder / b);
+            remainder %= b;
+            if (map.containsKey(remainder)) { //如果重复说明有循环
+                sb.insert(map.get(remainder), "(");//相当于在重复起前插入
+                sb.append(")");
                 break;
-            } else map.put(num, res.length());
+            } else map.put(remainder, sb.length());
         }
-        return res.toString();
+        return sb.toString();
     }
 }
-/*
-1.正负号，注意越界
-2.整数部分
-3.小数部分 */
+
