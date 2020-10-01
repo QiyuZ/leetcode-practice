@@ -1,4 +1,4 @@
-class Solution {
+class Solution { O(log(min(m,n)))
     public double findMedianSortedArrays(int[] nums1, int[] nums2) { //相当于找中间的数，二分k每次排除K/2知道k=1找到那个数
         int m = nums1.length, n = nums2.length;
         int left = (m + n + 1) / 2; //如果是偶数个则是两个，奇数则相同，不管什么情况+1不影响
@@ -17,3 +17,22 @@ class Solution {
         return getKth(nums1, i + 1, e1, nums2, s2, e2, k - (i - s1 + 1));
     }
 }
+
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length, i = 0, j = 0, index = -1, cand1 = 0, cand2 = 0;
+        while (i < m || j < n) {
+            int num = 0;
+            if (j == n || (i != m && nums1[i] < nums2[j])) num = nums1[i++];
+            else if (i == m || (j != n && nums1[i] >= nums2[j])) num = nums2[j++];
+            index++;
+            if (index == (m + n) / 2 - 1) cand1 = num;
+            else if (index == (m + n) / 2) cand2 = num;
+            if (index >= (m + n) / 2) break;
+        }
+        return (m + n) % 2 == 0 ? (double)(cand1 + cand2) / 2.0 : (double)cand2;
+    }
+}
+
+
+
