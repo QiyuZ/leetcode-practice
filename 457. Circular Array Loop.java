@@ -1,23 +1,24 @@
 class Solution {
-    public boolean circularArrayLoop(int[] nums) {
-        if(nums == null || nums.length == 0) return false;
-        for (int i = 0; i < nums.length; i++) {
-            int j = i, k = getNext(nums, i);
-            while (nums[i] * nums[k] > 0 && nums[i] * nums[getNext(nums, k)] > 0) { //这里是检查方向相同，即两个同正或同负
-                if (j == k) {
-                    if (j == getNext(nums, j)) break; //注意这里要break这个while不然出不来比如[-1, 2]说明以这个index起始的不成立
-                    return true;
-                } 
-                j = getNext(nums, j); //不相等就接着走
-                k = getNext(nums, getNext(nums, k));
+    public boolean circularArrayLoop(int[] nums) {//slow - fast 指针
+        if (nums == null || nums.length <= 0) return false;
+        int n = nums.length;
+        for (int i = 0; i < n; i++) nums[i] %= n; //变为(-n, n)不包括边界，好处是如果里面的数特别大或负数特别小那么计算next比较麻烦 
+        boolean[] visited = new boolean[n];//防止多次visit
+        for (int i = 0; i < n; i++) {
+            int slow = i, fast = i;
+            if (visited[slow]) continue; 
+            while (nums[slow] * nums[getNext(nums, fast)] > 0 && nums[slow] * nums[getNext(nums, getNext(nums, fast))] > 0) { //保证同正同负，即相同方向,注意是并，而且要查三步的
+                slow = getNext(nums, slow);
+                fast = getNext(nums, getNext(nums, fast));
+                if (visited[slow]) break;
+                if (slow == fast) return true;
+                visited[slow] = true;
             }
-            
         }
         return false;
     }
-    public int getNext(int[] nums, int n) {
-        return (n + nums[n]) >= 0 ? (n + nums[n]) % nums.length : nums.length + ((nums[n] + n) % nums.length); 
-        //注意，小于时是负数所以是nums.length +
+    
+    private int getNext(int[] nums, int index) {
+        return (index + nums[index] + nums.length) % nums.length; //这里注意要+长度因为可能是负数但是因为是不超过-n的所以加一个n就可以
     }
 }
-/*快慢指针，当两者重合且慢的下一个不是自身说明成立*/
