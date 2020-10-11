@@ -1,31 +1,46 @@
 class Solution {
     public String decodeString(String s) {
-        if (s.length() == 0 || s == null) return "";
+        if (s == null || s.isEmpty()) return s;
         Stack<Integer> count = new Stack<>();
         Stack<String> res = new Stack<>();
-        //因为是char要转换为str,先放入“”，可能第一个就是字符比如 ab
         res.push("");
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            //放入count，可能是多位数
-            if (c >= '0' && c <= '9') {
-                int start = i;
-                while (s.charAt(i + 1) >= '0' && s.charAt(i + 1) <= '9') i++;
-                count.push(Integer.parseInt(s.substring(start, i + 1)));
-            } 
-            //因为是char要转换为str,先放入“”
-            else if (c == '[') res.push("");
-            else if (c == ']') {
-                String str = res.pop();
+        int i = 0, num = 0;
+        while (i < s.length()) {
+            char cur = s.charAt(i);
+            if (cur >= '0' && cur <= '9') num = num * 10 + (cur - '0');
+            else if (cur == '[') {
+                res.push(""); //用“”分隔并且加的时候就可以变成了string,如果不分隔多个括号时会把之前的都加上
+                count.push(num);
+                num = 0;
+            } else if (Character.isLetter(cur)) res.push(res.pop() + cur);
+            else if (cur == ']') {
+                String peek = res.pop();
                 StringBuilder sb = new StringBuilder();
-                int times = count.pop();
-                for (int j = 0; j < times; j++) sb.append(str);
-                //放入时注意要和前面的连接到一起，因为可能会有嵌套的格式3[a2[c]]
+                int repeat = count.pop();
+                for (int j = 0; j < repeat; j++) sb.append(peek);
                 res.push(res.pop() + sb.toString());
             }
-            else res.push(res.pop() + c);
+            i++;
         }
-        //遍历完，这里面应该就只有一个
-        return res.pop();
+        return res.peek();
+    }
+}
+
+class Solution {
+    private int index = 0;
+    public String decodeString(String s) {
+        StringBuilder result = new StringBuilder();
+        while (index < s.length() && s.charAt(index) != ']') {
+            if (!Character.isDigit(s.charAt(index))) result.append(s.charAt(index++));
+            else {
+                int k = 0; // build k until next character is a digit
+                while (index < s.length() && Character.isDigit(s.charAt(index))) k = k * 10 + s.charAt(index++) - '0';
+                index++; // ignore the opening bracket '['
+                String decodedString = decodeString(s); //注意这里还可以用s因为有global index来mark位置
+                index++; // ignore the closing bracket ']'
+                while (k-- > 0) result.append(decodedString); // build k[decodedString] and append to the result
+            }
+        }
+        return result.toString();
     }
 }
