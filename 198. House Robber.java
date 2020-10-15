@@ -24,3 +24,17 @@ class Solution {
         return S[length];        
     }
 }
+
+class Solution {
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        if (nums.length == 1) return nums[0];
+        int pre = nums[0], cur = Math.max(nums[0], nums[1]), res = cur; //可以dp但是发现其实只取决于前一个和前前一个所以可以直接用变量
+        for (int i = 2; i < nums.length; i++) {
+            res = Math.max(pre + nums[i], cur);
+            pre = cur;
+            cur = res;
+        }
+        return res;
+    }
+}
