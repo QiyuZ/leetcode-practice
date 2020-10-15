@@ -1,17 +1,21 @@
 class Solution {
-    public int rob(int[] nums) {
+    public int rob(int[] nums) {//因为首尾不能相接，所以两大类情况，0到n-1或者1到最后
         if (nums == null || nums.length == 0) return 0;
-        if (nums.length == 1) return nums[0];
-        return Math.max(rob(0, nums.length - 1, nums), rob(1, nums.length, nums)); //其实就是分成了两种情况，分别写下就行
+        int n = nums.length;
+        if (n == 1) return nums[0];
+        if (n == 2) return Math.max(nums[0], nums[1]);
+        return Math.max(rob(nums, 0, n - 2), rob(nums, 1, n - 1)); 
+        //必须两个都算，不能比两端和然后只算最大的，因为两端的不一定用的上，eg.[2,7,9,3,1] 2+3<7+1但是用前面的
     }
-    public int rob(int start, int end, int[] nums) {
-        int preRob = 0, preNotRob = 0;
-        for (int i = start; i < end; i++) {
-            int curRob = preNotRob + nums[i];
-            int curNotRob = Math.max(preRob, preNotRob);
-            preRob = curRob;
-            preNotRob = curNotRob;
+    
+    private int rob(int[] nums, int start, int end) {
+        int rob = 0, notRob = 0;
+        for (; start <= end; start++) {
+            int curRob = notRob + nums[start];
+            int curNot = Math.max(rob, notRob);
+            rob = curRob;
+            notRob = curNot;
         }
-        return Math.max(preRob, preNotRob);
+        return Math.max(rob, notRob);
     }
 }
