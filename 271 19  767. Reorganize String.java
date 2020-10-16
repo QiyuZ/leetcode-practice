@@ -1,32 +1,31 @@
 class Solution {
-    public String reorganizeString(String S) { //插空
-        int[] letters = new int[26];
+    public String reorganizeString(String S) {
+        if (S == null || S.length() < 2) return S;
+        int[] mark = new int[26];
+        int max = 0;
         char maxChar = 'a';
-        int maxCount = 0;
-        for (Character c : S.toCharArray()) {//找到最大的char和其频率
-            letters[c - 'a']++;
-            if (letters[c - 'a'] > maxCount) {
-                maxCount = letters[c - 'a'];
-                maxChar = c;
+        for (char ch : S.toCharArray()) {
+            mark[ch - 'a']++;
+            if (mark[ch - 'a'] > max) {
+                max = mark[ch - 'a'];
+                maxChar = ch;
             }
         }
-        char[] res = new char[S.length()];
-        if (maxCount > (S.length() + 1) / 2) return ""; //最多的是关键，超过这个肯定不行
+        if (2 * max > S.length() + 1) return ""; //最多的超过一半则不行,max个要至少有max-1个其他的，所以当n-max < max-1则不成立
         int i = 0;
-        while (letters[maxChar - 'a'] > 0) {//现在偶数位填充
+        char[] res = new char[S.length()];
+        while (mark[maxChar - 'a'] > 0) { //先把最多的放偶数位，已知肯定成立所以一定能放下
             res[i] = maxChar;
-            letters[maxChar - 'a']--;
+            mark[maxChar - 'a']--;
             i += 2;
         }
-        for (char c = 'a'; c <= 'z'; c ++){
-            while (letters[c - 'a']-- > 0){ //注意此时可能偶数位没有填充完，所以接着走
-                if (i >= res.length){//如果偶数位完了，就换到奇数位开头
-                    i = 1;
-                }
-                res[i] = c;
-                i += 2;
-
-            }
+        for (int j = 0; j < 26; j++) {//这里注意之前偶数位不一定结束了，所以要直接走不能在之前就i=1
+            while (mark[j] > 0){
+                if (i >= S.length()) i = 1; //检查要在while循环里，因为随时可能走完，注意是>=因为不一定奇数偶数，可能停止len+1
+                res[i] = (char)(j + 'a');
+                mark[j]--;
+                i += 2; //注意还是移两位
+            } 
         }
         return new String(res);
     }
