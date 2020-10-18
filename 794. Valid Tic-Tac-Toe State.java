@@ -1,29 +1,34 @@
 class Solution {
     public boolean validTicTacToe(String[] board) {
-        int turns = 0;
-        boolean xwin = false, owin = false;
-        int[] rows = new int[3], cols = new int[3];
-        int diag = 0, antidiag = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (board[i].charAt(j) == 'X') {
-                    turns++; rows[i]++; cols[j]++;
+        if (board == null || board.length == 0) return false;
+        int n = board.length;
+        int[] rows = new int[n], cols = new int[n]; //横竖两条对角线
+        int diag = 0, antidiag = 0, count = 0; //另外X数量应该大于等于O数量
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length(); j++) {
+                char cur = board[i].charAt(j);
+                if (cur == 'X') {
+                    rows[i]++;
+                    cols[j]++;
+                    count++;
                     if (i == j) diag++;
-                    if (i + j == 2) antidiag++;
-                } else if (board[i].charAt(j) == 'O') {
-                    turns--; rows[i]--; cols[j]--;
+                    if (i + j == n - 1) antidiag++; //注意是n-1因为是0开始的
+                } else if (cur == 'O') {
+                    rows[i]--;
+                    cols[j]--;
+                    count--;
                     if (i == j) diag--;
-                    if (i + j == 2) antidiag--;
+                    if (i + j == n - 1) antidiag--;
                 }
             }
         }
-        xwin = rows[0] == 3 || rows[1] == 3 || rows[2] == 3 || 
-               cols[0] == 3 || cols[1] == 3 || cols[2] == 3 || 
-               diag == 3 || antidiag == 3;
-        owin = rows[0] == -3 || rows[1] == -3 || rows[2] == -3 || 
-               cols[0] == -3 || cols[1] == -3 || cols[2] == -3 || 
-               diag == -3 || antidiag == -3;
-        if ((xwin && turns != 1) || (owin && turns != 0)) return false;
-        return turns == 1 || turns == 0;
+        if (count != 0 && count != 1) return false; //只能是0或者1，注意是与不是或否则一直成立
+        boolean xwins = diag == n || antidiag == n ? true : false, owins = diag == -n || antidiag == -n ? true : false;
+        for (int i = 0; i < n; i++) {
+            if (rows[i] == n || cols[i] == n) xwins = true;
+            if (rows[i] == -n || cols[i] == -n) owins = true;
+        }
+        if ((xwins && count != 1) || (owins && count != 0)) return false; //如果x win则个数多一个owin则相等，注意这里应该只判断不成立的因为有可能都没赢
+        return true;
     }
 }
