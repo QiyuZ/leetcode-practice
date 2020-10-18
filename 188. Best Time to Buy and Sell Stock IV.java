@@ -20,3 +20,26 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+    public int maxProfit(int k, int[] prices) {
+        if (k <= 0 || prices == null || prices.length == 0) return 0;
+        int n = prices.length;
+        if (2 * k >= n) return quickSolution(prices); //相当于随意买卖参考122
+        int[] cost = new int[k + 1], profit = new int[k + 1];
+        Arrays.fill(cost, Integer.MIN_VALUE);
+        for (int price : prices) {
+            for (int i = 1; i <= k; i++) {
+                cost[i] = Math.max(cost[i], profit[i - 1] - price); //找最大因为是负数，当然后面盈利了就是正数了
+                profit[i] = Math.max(profit[i], cost[i] + price);
+            }
+        }
+        return profit[k];
+    }
+    
+    private int quickSolution(int[] prices) {
+        int res = 0;
+        for (int i = 1; i < prices.length; i++) res += prices[i] > prices[i - 1] ? prices[i] - prices[i - 1] : 0;
+        return res;
+    }
+}
