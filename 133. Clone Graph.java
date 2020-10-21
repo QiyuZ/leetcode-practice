@@ -1,30 +1,44 @@
-/**
- * Definition for undirected graph.
- * class UndirectedGraphNode {
- *     int label;
- *     List<UndirectedGraphNode> neighbors;
- *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
- * };
- */
-public class Solution {
-    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> neighbors;
+    
+    public Node() {
+        val = 0;
+        neighbors = new ArrayList<Node>();
+    }
+    
+    public Node(int _val) {
+        val = _val;
+        neighbors = new ArrayList<Node>();
+    }
+    
+    public Node(int _val, ArrayList<Node> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+}
+*/
+
+class Solution {
+    public Node cloneGraph(Node node) {
         if (node == null) return null;
-        UndirectedGraphNode res = new UndirectedGraphNode(node.label);
-        Map<Integer, UndirectedGraphNode> map = new HashMap<>();
-        map.put(res.label, res); //初始化map，queue； ，queue放被clone的node，map中放res每次遍历queue中cur在上面clone
-        Queue<UndirectedGraphNode> queue = new LinkedList<>();
+        Queue<Node> queue = new LinkedList<>();
         queue.offer(node);
+        Map<Node, Node> map = new HashMap<>();
+        map.put(node, new Node(node.val)); //只有这一个需要不判断直接放入，所以是个特例放在最前面先加入
         while (!queue.isEmpty()) {
-            UndirectedGraphNode cur = queue.poll();
-            for (UndirectedGraphNode n : cur.neighbors) {
-                if (!map.containsKey(n.label)) {
-                    map.put(n.label, new UndirectedGraphNode(n.label)); //注意此处不可以直接put(n.label, n) 因为有包含关系有很多不可以直接放
-                    queue.offer(n);
-                }
-                map.get(cur.label).neighbors.add(map.get(n.label));
+            Node cur = queue.poll();
+            for (Node next : cur.neighbors) {
+                if (!map.containsKey(next)) {
+                    map.put(next, new Node(next.val));
+                    queue.offer(next);  //注意只有之前没走过的才放入queue中，否则如果是个环就无限循环了
+                } 
+                map.get(cur).neighbors.add(map.get(next));//注意即使map中存在这个也要加入neighbors
             }
         }
-        return res;
+        return map.get(node);
     }
 }
 
