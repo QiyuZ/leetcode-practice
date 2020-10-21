@@ -1,32 +1,30 @@
-//constant time
 class Solution {
-    public int firstUniqChar(String s) {
-        if (s == null || s.length() == 0) return -1;
-        int p = s.length();
-        for (char c = 'a'; c <= 'z'; c++) {
-            int index = s.indexOf(c);
-            if (index == -1) continue;
-            if (index == s.lastIndexOf(c)) p = Math.min(index, p);
+    public int firstUniqChar(String s) { //One pass
+        Map<Character, Integer> map = new LinkedHashMap<>();
+        Set<Character> set = new HashSet<>();
+        for (int i = 0; i < s.length(); i++) {
+            if (set.contains(s.charAt(i))) {
+                if (map.get(s.charAt(i)) != null) {
+                    map.remove(s.charAt(i));
+                }
+            } else {
+                map.put(s.charAt(i), i);
+                set.add(s.charAt(i));
+            }
         }
-        return p == s.length() ? -1 : p;
+        return map.size() == 0 ? -1 : map.entrySet().iterator().next().getValue();
     }
 }
 
-//O(n)
-class Solution {
+class Solution { //2 passes
     public int firstUniqChar(String s) {
-        if (s == null || s.length() == 0) return -1;
-        int[] count = new int[26];
+        int[] mark = new int[26];
         for (char c : s.toCharArray()) {
-            count[c - 'a']++;
+            mark[c - 'a']++;
         }
-        int res = -1;
         for (int i = 0; i < s.length(); i++) {
-            if (count[s.charAt(i) - 'a'] == 1) {
-                res = i;
-                break;
-            }
+            if (mark[s.charAt(i) - 'a'] == 1) return i;
         }
-        return res;
+        return -1;
     }
 }
