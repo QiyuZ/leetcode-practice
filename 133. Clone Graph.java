@@ -43,21 +43,16 @@ class Solution {
 }
 
 //DFS
-public class Solution {
-    private HashMap<Integer, UndirectedGraphNode> map = new HashMap<>(); //记录是否被访问
-    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
-        return clone(node);
-    }
-    public UndirectedGraphNode clone(UndirectedGraphNode node) {
-        if (node == null) return null;
-        if (map.containsKey(node.label)) {
-            return map.get(node.label);
+class Solution {
+    private HashMap <Node, Node> visited = new HashMap<>();
+    public Node cloneGraph(Node node) {
+        if (node == null) return node;
+        if (visited.containsKey(node)) return visited.get(node);
+        Node cloneNode = new Node(node.val, new ArrayList());
+        visited.put(node, cloneNode);
+        for (Node neighbor: node.neighbors) {
+            cloneNode.neighbors.add(cloneGraph(neighbor));
         }
-        UndirectedGraphNode newClone = new UndirectedGraphNode(node.label);
-        map.put(newClone.label, newClone);
-        for (UndirectedGraphNode neighbor : node.neighbors) {
-            newClone.neighbors.add(clone(neighbor));
-        }
-        return newClone;
+        return cloneNode;
     }
 }
