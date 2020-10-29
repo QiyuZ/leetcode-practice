@@ -1,14 +1,13 @@
 class Solution {
     public int maxDistToClosest(int[] seats) {
-        if (seats == null || seats.length == 0) return 0;
-        int res = 0, i = 0, j = 0;
-        for (; j < seats.length; j++) {
-            if (seats[j] == 1) {
-                if (i == 0) res = j; //在开头可以在最边上
-                else res = Math.max(res, (j - i + 1) / 2); //在中间
-                i = j + 1; //i移到下一个位置，如果是连续1会一直移动
+        int l = -1, res = 0;
+        for (int r = 0; r < seats.length; r++) {
+            if (seats[r] == 1) {
+                if (l == -1) res = r; //说明前面没有1，则可以坐在0 index这样res就是现在的r 
+                else res = Math.max(res, (r - l) / 2); //一般情况左右有人，找中间位置
+                l = r; //更新左边人的位置
             }
         }
-        return Math.max(res, seats.length - i); //考虑结尾可能有特殊情况
+        return Math.max(res, seats.length - 1 - l); //最后如果右边没人则坐最右边此时直接减去l就行，如果右边有人那么seats.length - 1 == l 计算也无所谓
     }
 }
