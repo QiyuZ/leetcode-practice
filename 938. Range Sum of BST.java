@@ -4,18 +4,20 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public int rangeSumBST(TreeNode root, int L, int R) {
-        int res = 0;
-        if (root == null) return res;
-        if (root.val >= L && root.val <= R) {
-            res += root.val + rangeSumBST(root.left, L, R) + rangeSumBST(root.right, L, R); //后面两个别忘了，要接下去走
-        }
-        else if (root.val < L) res += rangeSumBST(root.right, L, R);
-        else res += rangeSumBST(root.left, L, R);
-        return res;
+    public int rangeSumBST(TreeNode root, int low, int high) {
+        if (root == null) return 0; //end case
+        if (root.val >= low && root.val <= high) return root.val + rangeSumBST(root.left, low, high) + rangeSumBST(root.right, low, high); //in middle, then there could be valid node from both left or right
+        if (root.val < low) return rangeSumBST(root.right, low, high); //all in right
+        return rangeSumBST(root.left, low, high); //all in left
     }
 }
