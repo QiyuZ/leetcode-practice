@@ -1,33 +1,30 @@
 class Solution {
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
-        Map<Integer, Set<Integer>> nodes = new HashMap<>();
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        if (n == 0) return Collections.emptyList();
+        if (n == 1) return Arrays.asList(0);
+        for (int[] e : edges) {
+            if (!map.containsKey(e[0])) map.put(e[0], new HashSet<>()); //undirected graph, add twice from different directions
+            if (!map.containsKey(e[1])) map.put(e[1], new HashSet<>());
+            map.get(e[0]).add(e[1]);
+            map.get(e[1]).add(e[0]);
+        }
         List<Integer> leaves = new ArrayList<>();
-        if (n == 0) return leaves;
-        if (n == 1) {
-            leaves.add(0);
-            return leaves;
+        for (int i = 0; i < n; i++) {
+            if (map.get(i).size() == 1) leaves.add(i); //find the leaves
         }
-        for (int[] edge : edges) { //构建图
-            if (!nodes.containsKey(edge[0])) nodes.put(edge[0], new HashSet<>());
-            nodes.get(edge[0]).add(edge[1]);
-            if (!nodes.containsKey(edge[1])) nodes.put(edge[1], new HashSet<>());
-            nodes.get(edge[1]).add(edge[0]);
-        }
-        for (int i = 0; i < n; i++) { //找出入度为1的，即为叶子
-            if (nodes.get(i).size() == 1) leaves.add(i);
-        }
-        while (n > 2) {//根最多只能有两个，可画图证明
+        while (n > 2) {// at most 2 root, because if there's even number, 1-2-3 then 2 will be root, if there's odd number 1-2-3-4, then 2,3 will be root.
+            //Because cycle is not allowed, so actually they can all be treated in a chain. And in the shortest chain (min heights), there could be only 2 roots
             List<Integer> newLeaves = new ArrayList<>();
-            n -= leaves.size(); //删去叶子
+            n -= leaves.size();
             for (int leave : leaves) {
-                for (int parent : nodes.get(leave)) {
-                    nodes.get(parent).remove(leave);
-                    if (nodes.get(parent).size() == 1) newLeaves.add(parent); //加入新叶子
+                for (int parent : map.get(leave)) {
+                    map.get(parent).remove(leave);
+                    if (map.get(parent).size() == 1) newLeaves.add(parent); //find new leaves
                 }
-                
             }
             leaves = newLeaves;
         }
-        return leaves;
+        return leaves; //the last "leaves" are roots
     }
 }
