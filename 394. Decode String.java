@@ -27,20 +27,20 @@ class Solution {
 }
 
 class Solution {
-    private int index = 0;
+    private int index = 0; //global pos mark
     public String decodeString(String s) {
-        StringBuilder result = new StringBuilder();
-        while (index < s.length() && s.charAt(index) != ']') {
-            if (!Character.isDigit(s.charAt(index))) result.append(s.charAt(index++));
+        StringBuilder res = new StringBuilder();
+        while (index < s.length() && s.charAt(index) != ']') { //end when next char is ], because when recursion we just wanna deal the part
+            if (Character.isLetter(s.charAt(index))) res.append(s.charAt(index++)); //normal case, just letter
             else {
-                int k = 0; // build k until next character is a digit
-                while (index < s.length() && Character.isDigit(s.charAt(index))) k = k * 10 + s.charAt(index++) - '0';
-                index++; // ignore the opening bracket '['
-                String decodedString = decodeString(s); //注意这里还可以用s因为有global index来mark位置
-                index++; // ignore the closing bracket ']'
-                while (k-- > 0) result.append(decodedString); // build k[decodedString] and append to the result
+                int num = 0;
+                while (index < s.length() && Character.isDigit(s.charAt(index))) num = num * 10 + (s.charAt(index++) - '0'); //could be several digits number
+                if (s.charAt(index) == '[') index++;
+                String innerRes = decodeString(s); //dont need substring here as index is a global pos mark
+                if (s.charAt(index) == ']') index++;
+                while (num-- > 0) res.append(innerRes);
             }
         }
-        return result.toString();
+        return res.toString();
     }
 }
