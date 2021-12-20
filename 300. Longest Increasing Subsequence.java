@@ -35,3 +35,51 @@ class Solution {
         return size;
     }
 }
+
+/**
+*One thing to add: this algorithm does not always generate a valid subsequence of the input, but the length of the subsequence will always equal the length of the longest increasing subsequence. For example, with the input [3, 4, 5, 1], at the end we will have sub = [1, 4, 5], which isn't a subsequence, but the length is still correct. The length remains correct because the length only changes when a new element is larger than any element in the subsequence. In that case, the element is appended to the subsequence instead of replacing an existing element.
+The purpose the replace is to ensure the following valid value could be appeneded
+**/
+// class Solution {
+//     public int lengthOfLIS(int[] nums) {
+//         List<Integer> res = new ArrayList<>();
+//         res.add(nums[0]);
+//         for (int i = 1; i < nums.length; i++) {
+//             if (nums[i] > res.get(res.size() - 1)) res.add(nums[i]);
+//             else {
+//                 int pos = 0;
+//                 while (pos < res.size() && res.get(pos) < nums[i]) pos++;
+//                 res.set(pos, nums[i]);
+//             }
+//         }
+//         return res.size();
+//     }
+// }
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        ArrayList<Integer> sub = new ArrayList<>();
+        sub.add(nums[0]);
+        for (int i = 1; i < nums.length; i++) {
+            int num = nums[i];
+            if (num > sub.get(sub.size() - 1)) sub.add(num);
+            else {
+                int j = binarySearch(sub, num);
+                sub.set(j, num);
+            }
+        }
+        return sub.size();
+    }
+    
+    private int binarySearch(ArrayList<Integer> sub, int num) {
+        int left = 0, right = sub.size() - 1, mid = (left + right) / 2;
+        while (left < right) {
+            mid = (left + right) / 2;
+            if (sub.get(mid) == num) return mid;
+            if (sub.get(mid) < num) left = mid + 1;
+            else right = mid;
+        }
+        
+        return left;
+    }
+}
