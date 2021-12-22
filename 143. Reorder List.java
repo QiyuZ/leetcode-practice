@@ -11,38 +11,26 @@
 class Solution {
     public void reorderList(ListNode head) {
         if (head == null || head.next == null) return;
-
-        // find the middle of linked list [Problem 876]
-        // in 1->2->3->4->5->6 find 4 
-        ListNode slow = head, fast = head;
-        while (fast != null && fast.next != null) {
-          slow = slow.next;
-          fast = fast.next.next;
+        ListNode fast = head, slow = head;
+        while (fast != null && fast.next != null) { //find the start of second part 1-2-3-4-5
+            slow = slow.next;
+            fast = fast.next.next;
         }
-
-        // reverse the second part of the list [Problem 206]
-        // convert 1->2->3->4->5->6 into 1->2->3->4 and 6->5->4
-        // reverse the second half in-place
-        ListNode prev = null, curr = slow, tmp;
-        while (curr != null) {
-          tmp = curr.next;
-
-          curr.next = prev;
-          prev = curr;
-          curr = tmp;
+        ListNode pre = null, cur = slow;
+        while (cur != null) {  //reverse the second part 1-2-5-4-3
+            ListNode next = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = next;
         }
-
-        // merge two sorted linked lists [Problem 21]
-        // merge 1->2->3->4 and 6->5->4 into 1->6->2->5->3->4
-        ListNode first = head, second = prev;
-        while (second.next != null) { //因为最后一个node是相同的所以second.next != null，这样second的最后一个node不会被加上
-          tmp = first.next;
-          first.next = second;
-          first = tmp;
-
-          tmp = second.next;
-          second.next = first;
-          second = tmp;
+        ListNode first = head, second = pre; //mark head of part 1 and part 2
+        while (second.next != null) { //alternately append one by one 1-5-2-4-3
+            ListNode next = first.next;
+            first.next = second;
+            first = next;
+            next = second.next;
+            second.next = first;
+            second = next;
         }
     }
 }
