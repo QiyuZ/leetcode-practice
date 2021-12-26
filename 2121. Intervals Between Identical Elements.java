@@ -1,4 +1,3 @@
-//O(N) prefix sum
 class Solution {
     public long[] getDistances(int[] arr) {
         Map<Integer, List<Integer>> map = new HashMap<>();
@@ -13,10 +12,9 @@ class Solution {
             for (int num : indexes) sum += num;
             for (int i = 0; i < indexes.size(); i++) {
                 int num = indexes.get(i);
+                long left = i * (long)num - pre, right = (sum - pre - num) - (indexes.size() - i - 1) * (long)num;
+                res[num] = left + right;
                 pre += num;
-                res[num] = (i + 1) * (long)num - (pre - num) + sum - pre - (indexes.size() - i) * (long)num;
-				//sum of left part  (i + 1) * (long)num - (pre - num)
-				//sum of right part sum - pre - (indexes.size() - i) * (long)num
             }
         }
         return res;
