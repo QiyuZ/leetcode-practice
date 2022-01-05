@@ -1,29 +1,28 @@
-class Solution {
-    public List<List<String>> partition(String s) { //和combination一个思路，backtracking去找所有的
+class Solution {//O(n*2^n)
+    public List<List<String>> partition(String s) {
         List<List<String>> res = new ArrayList<>();
         if (s == null || s.length() == 0) return res;
-        helper(res, new ArrayList<String>(), s);
+        dfs(res, new ArrayList<String>(), s, 0);
         return res;
     }
-    public void helper(List<List<String>> res, List<String> cur, String s) {
-        if (s.length() == 0) { //说明走到了头，所有的都成立
-            res.add(new ArrayList<>(cur));
+    private void dfs(List<List<String>> res, List<String> cur, String s, int start) {
+        if (start == s.length()) { //it's the end add all
+            res.add(new ArrayList<>(cur));//copy list to avoid being changed
             return;
         }
-        for (int i = 0; i < s.length(); i++) {
-            if (isPalin(s.substring(0, i + 1))) {
-                cur.add(s.substring(0, i + 1));
-                helper(res, cur, s.substring(i + 1));
-                cur.remove(cur.size() - 1); //别忘了去掉当前的
+        for (int i = start; i < s.length(); i++) {
+            if (isPalin(s, start, i)) {
+                cur.add(s.substring(start, i + 1));
+                dfs(res, cur, s, i + 1); //note here is i + 1, otherwise, it will stay the same pos forever
+                cur.remove(cur.size() - 1);//move the last one, and find next valid ones, like[a,a,b,a] then back it will remove b and a and find[a, aba]
             }
         }
     }
-    public boolean isPalin(String s) {
-        int l = 0, r = s.length() - 1;
-        while (l <= r) {
-            if (s.charAt(l++) != s.charAt(r--)) return false;
-
+    private boolean isPalin(String s, int l, int r) {
+        while (l < r && s.charAt(l) == s.charAt(r)) {
+            l++;
+            r--;
         }
-        return true;
+        return l >= r; //odd l==r, even l > r, well better just return false during process
     }
 }
