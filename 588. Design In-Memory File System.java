@@ -1,74 +1,72 @@
 class FileSystem {
-
     private FileNode root;
-    
     public FileSystem() {
-        root = new FileNode("");
+        root = new FileNode("/");
     }
     
     public List<String> ls(String path) {
-        return createFileNode(path).getList();
+        return getOrCreateFile(path).getList();
     }
     
     public void mkdir(String path) {
-        createFileNode(path);
+        getOrCreateFile(path);
     }
     
     public void addContentToFile(String filePath, String content) {
-        createFileNode(filePath).addContent(content);
+        getOrCreateFile(filePath).writeContent(content);
     }
     
     public String readContentFromFile(String filePath) {
-        return createFileNode(filePath).getContent();
+        return getOrCreateFile(filePath).getContent();
     }
     
-    public FileNode createFileNode(String path) {
-        String[] files = path.split("/");
+    private FileNode getOrCreateFile(String path) {
+        String[] names = path.split("/");
         FileNode cur = root;
-        for (String f : files) {
-            if (f.length() == 0) continue; // 说明是//等价/
-            if (!cur.children.containsKey(f)) cur.children.put(f, new FileNode(f));
-            cur = cur.children.get(f);
-            if (cur.isFileType()) break;
+        for (String name : names) {
+            if (name.isEmpty()) continue; // 比如空格或者/
+            if (!cur.children.containsKey(name)) cur.children.put(name, new FileNode(name));
+            cur = cur.children.get(name);
+            if (cur.isFileType()) break; // not a dire, stop there
         }
         return cur;
     }
     
-    private class FileNode {
-        private TreeMap<String, FileNode> children;
-        private StringBuilder file;
+    class FileNode {
         private String name;
+        private TreeMap<String, FileNode> children;
+        private StringBuilder content;
         private boolean isFile;
         
-        public FileNode(String path) {
-            children = new TreeMap<>();
-            file = new StringBuilder();
+        public FileNode (String path) {
             this.name = path;
-            isFile = false;
+            this.children = new TreeMap<>();
+            this.content = new StringBuilder();
+            this.isFile = false;
         }
         
-        public String getContent(){
-            return file.toString();
-        }
-
-        public String getName(){
-            return name;
-        }
-
-        public void addContent(String content){
-            isFile = true;
-            file.append(content);
-        }
-
-        public boolean isFileType(){
-            return isFile;
+        public String getContent() {
+            return this.content.toString();
         }
         
-        public List<String> getList(){
-            List<String> list = new ArrayList<>();
-            if(isFileType()) list.add(getName());
-            else list.addAll(children.keySet());
-            return list;
+        public void writeContent(String newContent) {
+            content.append(newContent);
+            if (!isFile) isFile = true;
+        }
+        
+        public boolean isFileType() {
+            return this.isFile;
+        }
+        
+        public String getName() {
+            return this.name;
+        }
+        
+        public List<String> getList() {
+            List<String> res = new ArrayList<>();
+            if (isFileType()) res.add(name);
+            else res.addAll(children.keySet());
+            return res;
         }
     }
 }
