@@ -17,6 +17,7 @@ class Solution {
             for (int i = 0; i < size; i++) {
                 int[] cur = queue.poll();
                 if (grid[cur[0]][cur[1]] == '#') return steps;
+                if (grid[cur[0]][cur[1]] == 'X') continue; //note!! this is needed as the value may be added by the adjacent element
                 grid[cur[0]][cur[1]] = 'X';
                 for (int[] dir : dirs) {
                     int newX = cur[0] + dir[0], newY = cur[1] + dir[1];
