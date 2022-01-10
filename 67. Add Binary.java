@@ -9,7 +9,7 @@ class Solution {
             sb.append(sum % 2);
             carry = sum / 2;
         }
-        if (carry != 0) sb.append(carry);
+        if (carry != 0) sb.append(carry); //note, don't append 0 at last since there could be no carry needed
         return sb.reverse().toString();
     }
 }
