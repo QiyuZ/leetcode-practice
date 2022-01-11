@@ -31,3 +31,16 @@ class Solution {
         if(root.right != null) getSum(root.right, cur);
     }
 }
+
+class Solution {
+    public int sumRootToLeaf(TreeNode root) {
+        if (root == null) return 0;
+        return dfs(0, root);
+    }
+    private int dfs(int sum, TreeNode root) {
+        if (root == null) return 0;
+        sum = sum * 2 + root.val;
+        if (root.left == null && root.right == null) return sum;
+        return dfs(sum, root.left) + dfs(sum, root.right);
+    }
+}
