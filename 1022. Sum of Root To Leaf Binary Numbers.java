@@ -4,19 +4,30 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
+    private int res = 0;
     public int sumRootToLeaf(TreeNode root) {
-        if (root == null) return 0;
-        return dfs(0, root);
+        if (root == null) return res;
+        getSum(root, 0);
+        return res;
     }
-    
-    private int dfs(int sum, TreeNode root) {
-        if (root == null) return 0;
-        sum = sum * 2 + root.val;
-        if (root.left == null && root.right == null) return sum;
-        return dfs(sum, root.left) + dfs(sum, root.right);
+    private void getSum(TreeNode root, int pre) {
+        if(root == null) return;
+        int cur = pre * 2 + root.val;
+        if (root.left == null && root.right == null) { //only count when left and right are both null
+            res += cur;
+            return;
+        }
+        if(root.left != null) getSum(root.left, cur);
+        if(root.right != null) getSum(root.right, cur);
     }
 }
