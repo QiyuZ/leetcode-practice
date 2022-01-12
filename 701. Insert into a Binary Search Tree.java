@@ -4,36 +4,47 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode(int x) { val = x; }
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
  * }
  */
 class Solution {
-    public TreeNode insertIntoBST(TreeNode root, int val) {
-        if (root == null) return new TreeNode(val);
-        if (root.val > val) root.left = insertIntoBST(root.left, val);
-        else root.right = insertIntoBST(root.right, val);
+    public TreeNode insertIntoBST(TreeNode root, int val) { //just set to the children
+        if (root == null) return new TreeNode(val); //to the end, just create a new one
+        if (val > root.val) root.right = insertIntoBST(root.right, val);
+        else root.left = insertIntoBST(root.left, val);
         return root;
     }
 }
 
-
-    public TreeNode insertIntoBST(TreeNode root, int val) {
-        if(root == null) return new TreeNode(val);
-        TreeNode cur = root;
-        while(true) {
-            if(cur.val <= val) {
-                if(cur.right != null) cur = cur.right;
-                else {
-                    cur.right = new TreeNode(val);
-                    break;
-                }
-            } else {
-                if(cur.left != null) cur = cur.left;
-                else {
-                    cur.left = new TreeNode(val);
-                    break;
-                }
-            }
-        }
-        return root;
-    }
+// class Solution {
+//   public TreeNode insertIntoBST(TreeNode root, int val) {
+//     TreeNode node = root;
+//     while (node != null) {
+//       // insert into the right subtree
+//       if (val > node.val) {
+//         // insert right now
+//         if (node.right == null) {
+//           node.right = new TreeNode(val);
+//           return root;
+//         }
+//         else node = node.right;
+//       }
+//       // insert into the left subtree
+//       else {
+//         // insert right now
+//         if (node.left == null) {
+//           node.left = new TreeNode(val);
+//           return root;
+//         }
+//         else node = node.left;
+//       }
+//     }
+//     return new TreeNode(val);
+//   }
+// }
