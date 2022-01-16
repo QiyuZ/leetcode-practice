@@ -11,3 +11,20 @@ class Solution {
         return Math.max(res, seats.length - 1 - l); //最后如果右边没人则坐最右边此时直接减去l就行，如果右边有人那么seats.length - 1 == l 计算也无所谓
     }
 }
+
+class Solution {
+    public int maxDistToClosest(int[] seats) {
+        if (seats == null || seats.length == 0) return 0;
+        int n = seats.length, start = 0, end = n - 1;
+        while (start < n && seats[start] == 0) start++; //either seat in 2 sides
+        while (end >= 0 && seats[end] == 0) end--;
+        int cur = 0, maxZero = 0;
+        for (int i = start; i <= end; i++) { //or in the middle
+            if (seats[i] == 1) {
+                maxZero = Math.max(maxZero, cur);
+                cur = 0;
+            } else cur++;
+        }
+        return Math.max((maxZero + 1) / 2, Math.max(start - 0, n - 1 - end)); //note here maxZero + 1 to ensure we dont need to handle even or odd cases
+    }
+}
