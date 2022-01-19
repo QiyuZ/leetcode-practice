@@ -30,22 +30,39 @@ class Solution {
     public int depthSumInverse(List<NestedInteger> nestedList) {
         if (nestedList == null || nestedList.size() == 0) return 0;
         Queue<NestedInteger> queue = new LinkedList<>();
-        for (NestedInteger nest : nestedList) queue.offer(nest);
-        int sum = 0, pre = 0;
+        nestedList.forEach(x -> queue.offer(x));
+        int pre = 0, total = 0;
         while (!queue.isEmpty()) {
-            int level = 0, size = queue.size();
+            int size = queue.size();
             for (int i = 0; i < size; i++) {
-                NestedInteger cur = queue.poll();
-                if (cur.isInteger()) level += cur.getInteger();
+                NestedInteger node = queue.poll();
+                if (node.isInteger()) pre += node.getInteger();
                 else {
-                    if (cur.getList() != null) {
-                        for (NestedInteger next : cur.getList()) queue.offer(next);
-                    }
+                    if (node.getList() != null) node.getList().forEach(x -> queue.offer(x));
                 }
             }
-            pre += level; //因为是bfs,pre 是个buff一直记录最初的保持下去就相当于加了好几次，有几层就加了几次
-            sum += pre;
+            total += pre; //every time add one more layer we add again, kind like 2*2*2 = 2 + 2 -> 4 + 4
         }
-        return sum;
+        return total;
+    }
+}
+
+class Solution {
+    private int flatSum = 0, maxDepth = 0;
+    public int depthSumInverse(List<NestedInteger> nestedList) { //they are complements with 339. eg. [1, [2]] = 3 * 1 + 3 * 2 - 1 * 1 - 2 * 2;
+        int depthSum = dfs(nestedList, 1);
+        return (maxDepth + 1) * flatSum - depthSum;
+    }
+    private int dfs(List<NestedInteger> nestedList, int depth) {
+        if (nestedList == null || nestedList.size() == 0) return 0;
+        int depthSum = 0;
+        for (NestedInteger node : nestedList) {
+            if (node.isInteger()) {
+                flatSum += node.getInteger(); //count flatSum and depth in this block as every node finally should be an integer
+                depthSum += depth * node.getInteger();
+                maxDepth = Math.max(maxDepth, depth);
+            } else depthSum += dfs(node.getList(), depth + 1);
+        }
+        return depthSum;
     }
 }
