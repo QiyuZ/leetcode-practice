@@ -21,16 +21,13 @@ class RandomizedSet {
     public boolean remove(int val) {
         if (!map.containsKey(val)) return false;
         int index = map.get(val);
-        if (index == list.size() - 1) {
-            map.remove(val);
-            list.remove(list.size() - 1);
-            return true;
+        if (index < list.size() - 1) {
+            int last = list.get(list.size() - 1);
+            list.set(index, last); //O(1), note can't use linkedlist here as it will cost O(n)
+            map.put(last, index);
         }
-        int last = list.get(list.size() - 1);
-        list.set(index, last); //注意用set不用add，add会多加
-        list.remove(list.size() - 1); //remove是index如果要元素并且是数字要list.remove(Integer.valueOf(last));
-        map.put(last, index);
         map.remove(val);
+        list.remove(list.size() - 1); //remove last element in arrayList is O(1), others are O(n). remove object is O(n). linkedlist remove first or last is O(n)
         return true;
     }
     
