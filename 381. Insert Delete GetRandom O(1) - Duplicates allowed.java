@@ -1,12 +1,12 @@
 class RandomizedCollection {
 
-    Map<Integer, Set<Integer>> map;
-    List<Integer> collections;
-    Random rand;
+    private Map<Integer, Set<Integer>> map;
+    private List<Integer> list;
+    private Random rand;
     /** Initialize your data structure here. */
     public RandomizedCollection() {
         map = new HashMap<>();
-        collections = new ArrayList<>();
+        list = new ArrayList<>();
         rand = new Random();
     }
     
@@ -17,36 +17,30 @@ class RandomizedCollection {
             contains = true;
             map.put(val, new HashSet<>());
         }
-        map.get(val).add(collections.size());
-        collections.add(val);
+        map.get(val).add(list.size());
+        list.add(val);
         return contains;
     }
     
     /** Removes a value from the collection. Returns true if the collection contained the specified element. */
-    public boolean remove(int val) { 
+    public boolean remove(int val) {
         if (!map.containsKey(val)) return false;
-        int idx = map.get(val).iterator().next(), lastIdx = collections.size() - 1, last = collections.get(lastIdx);
-        map.get(val).remove(idx);
-        if (map.get(val).isEmpty()) map.remove(val);
-        if (idx != lastIdx) { //如果移除的是最后一个，则已经移除过
+        int idx = map.get(val).iterator().next(), lastIdx = list.size() - 1, last = list.get(lastIdx);
+        map.get(val).remove(idx); // set takes O(1) time to remove any index
+        //note!!! here we need to remove first because if idx and lastIdx are in same set, both of them will be removed
+        if (map.get(val).isEmpty()) map.remove(val); //note, remove the empty one as it may influence the insert result
+        if (idx != lastIdx) {//make last to the index pos
             map.get(last).remove(lastIdx);
             map.get(last).add(idx);
-            collections.set(idx, last); //此处直接把第index个替换成最后一个，再删去最后一个
+            list.set(idx, last);
         }
-        collections.remove(lastIdx);
+        list.remove(lastIdx);
+
         return true;
     }
     
     /** Get a random element from the collection. */
     public int getRandom() {
-        return collections.get(rand.nextInt(collections.size()));
+        return list.get(rand.nextInt(list.size()));
     }
 }
-
-/**
- * Your RandomizedCollection object will be instantiated and called as such:
- * RandomizedCollection obj = new RandomizedCollection();
- * boolean param_1 = obj.insert(val);
- * boolean param_2 = obj.remove(val);
- * int param_3 = obj.getRandom();
- */
