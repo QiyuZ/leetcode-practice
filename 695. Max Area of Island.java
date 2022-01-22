@@ -7,22 +7,16 @@ class Solution {
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == 1) {
-                    int area = dfs(grid, i, j, m, n, 0);
-                    res = Math.max(area, res);
+                    res = Math.max(dfs(grid, i, j, m, n), res);
                 }
             }
         }
         return res;
     }
     
-    public int dfs(int[][] grid, int i, int j, int m, int n, int area) {
-        if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0) return area;
-        grid[i][j] = 0;
-        area++;
-        area = dfs(grid, i - 1, j, m, n, area);
-        area = dfs(grid, i, j + 1, m, n, area);
-        area = dfs(grid, i + 1, j, m, n, area);
-        area = dfs(grid, i, j - 1, m, n, area);
-        return area;
+    public int dfs(int[][] grid, int i, int j, int m, int n) {
+        if (i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == 0) return 0;
+        grid[i][j] = 0; //marked as visited
+        return 1 + dfs(grid, i - 1, j, m, n) + dfs(grid, i, j + 1, m, n) + dfs(grid, i + 1, j, m, n) + dfs(grid, i, j - 1, m, n); //this area plus others'
     }
 }
