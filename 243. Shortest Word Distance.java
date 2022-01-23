@@ -12,19 +12,15 @@ class Solution {
 }
 
 
-public int shortestDistance(String[] words, String word1, String word2) {
-    int p1 = -1, p2 = -1, min = Integer.MAX_VALUE;
-    
-    for (int i = 0; i < words.length; i++) {
-        if (words[i].equals(word1)) 
-            p1 = i;
-
-        if (words[i].equals(word2)) 
-            p2 = i;
-            
-        if (p1 != -1 && p2 != -1)
-            min = Math.min(min, Math.abs(p1 - p2));
+class Solution {
+    public int shortestDistance(String[] words, String word1, String word2) {
+        if (words == null || words.length == 0) return 0;
+        int a = -1, b = -1, res = words.length;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word1)) a = i;
+            else if (words[i].equals(word2)) b = i;
+            if (a != -1 && b != -1) res = Math.min(res, Math.abs(a - b));
+        }
+        return res;
     }
-    
-    return min;
 }
