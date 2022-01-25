@@ -18,3 +18,25 @@ class Solution {
         helper(root.right, target, k, res);
     }
 }
+
+
+class Solution { //sliding window by inorder O(n) time O(k) space
+    public List<Integer> closestKValues(TreeNode root, double target, int k) {          
+        Deque<Integer> deque = new LinkedList<>();
+        inorder(deque, root, target, k);
+        return new ArrayList(deque);
+    }
+    
+    private void inorder(Deque<Integer> deque, TreeNode node, double target, int k) {
+        if (node == null) return;
+        inorder(deque, node.left, target, k);
+        double val = Double.valueOf(node.val);
+        if (deque.size() == k) {
+            if (Math.abs(Double.valueOf(deque.peekFirst()) - target) > Math.abs(val - target)) {
+                deque.pollFirst();
+                deque.addLast(node.val);
+            } else return; //note if the cur has larger delta, then dont need to go ahead as bst increases in inorder traversal
+        } else deque.addLast(node.val);
+        inorder(deque, node.right, target, k);
+    }
+}
