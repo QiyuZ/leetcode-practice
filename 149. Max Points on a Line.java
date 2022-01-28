@@ -42,3 +42,25 @@ class Solution {
         return gcd(b % a, a);
     }
 }
+
+
+class Solution {
+    public int maxPoints(int[][] points) { //use float to ensure the precision
+        if (points == null || points.length < 3) return points == null ? 0 : points.length;
+        int n = points.length, max=0;
+        Map<Float, Integer> map = new HashMap<>();
+        for(int i = 0; i < n; i++) {
+            if (n - i <= max + 1) return max + 1; //even the following are in a line, don't go ahead if it's already smaller than current max
+            float slope = 0f;
+            for(int j = i + 1; j < n; j++) {
+                if((points[i][0] - points[j][0]) == 0) slope=100000001f; //close ro infinite
+                else slope=(float)(points[j][1] - points[i][1]) / (float)(points[j][0] - points[i][0]) + 0.0f;
+                map.put(slope, map.getOrDefault(slope, 0) + 1);
+                max = Math.max(max, map.get(slope));
+            }
+            map.clear();
+        }
+        return max + 1;
+    }
+    
+}
