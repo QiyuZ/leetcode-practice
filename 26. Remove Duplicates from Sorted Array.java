@@ -1,15 +1,10 @@
 class Solution {
     public int removeDuplicates(int[] nums) {
-        if (nums == null || nums.length < 1) return nums.length;
-        int pos = 0;
-        for (int j = 0; j < nums.length; j++) {
-            if (nums[j] != nums[pos]) {
-                pos++; //先移动一位，之前的那个没重复的保留，相当于0011， 指针指到第二个0再和后面交换
-                int temp = nums[pos];
-                nums[pos] = nums[j];
-                nums[j] = temp;
-            }
+        if (nums == null || nums.length == 0) return 0;
+        int i = 0;
+        for (int j = 1; j < nums.length; j++) {
+            if (nums[i] != nums[j]) nums[++i] = nums[j]; //2 points, j find different one and i assign to next one 
         }
-        return pos + 1; //最后一个数字的本身
+        return i + 1;
     }
 }
