@@ -8,6 +8,40 @@
  * }
  */
 class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+        Map<Integer, List<Integer>> map = new HashMap<>(); //col index - list of node's val
+        Queue<NodeWithCol> queue = new LinkedList<>();
+        queue.offer(new NodeWithCol(root, 0));
+        int max = 0, min = 0;
+        while (!queue.isEmpty()) {
+            NodeWithCol cur = queue.poll();
+            TreeNode node = cur.node;
+            int col = cur.col;
+            if (!map.containsKey(col)) map.put(col, new ArrayList<>());
+            map.get(col).add(node.val);
+            min = Math.min(min, col); //count range while traversal 
+            max = Math.max(max, col);
+            if (node.left != null) queue.offer(new NodeWithCol(node.left, col - 1));
+            if (node.right != null) queue.offer(new NodeWithCol(node.right, col + 1));
+        }
+        for (int i = min; i <= max; i++) res.add(map.get(i));
+        return res;
+    }
+    
+    class NodeWithCol {
+        TreeNode node;
+        int col;
+        public NodeWithCol(TreeNode node, int col) {
+            this.node = node;
+            this.col = col;
+        }
+    }
+}
+
+
+class Solution {
     private int min, max;
     public List<List<Integer>> verticalOrder(TreeNode root) {
         List<List<Integer>> res = new ArrayList<>();
