@@ -1,7 +1,7 @@
 class Solution {
     public int largestIsland(int[][] grid) { //染色法，然后查看0和哪几个相连，找面积最大的
         Map<Integer, Integer> map = new HashMap<>();
-        map.put(0, 0);
+        map.put(0, 0); //so the line 27 won't be affect
         int n = grid.length;
         int color = 2; //0,1 已经有，从2开始
         for (int i = 0; i < n; i++) {
@@ -23,7 +23,7 @@ class Solution {
                     set.add(j > 0 ? grid[i][j - 1] : 0);
                     set.add(j < n - 1 ? grid[i][j + 1] : 0);
                     int newArea = 1; //本次的0变1也计算进去
-                    for (int c : set) newArea += map.get(c);
+                    for (int c : set) newArea += map.get(c); //need to add one by one as the changed one may be a bridge to connect 2 or more islands
                     res = Math.max(res, newArea);
                 }
             }
