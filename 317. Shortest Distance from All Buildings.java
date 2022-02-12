@@ -1,44 +1,48 @@
 class Solution {
+    private static int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     public int shortestDistance(int[][] grid) {
         if (grid == null || grid.length == 0) return 0;
         int m = grid.length, n = grid[0].length, house = 0;
         int[][] reach = new int[m][n], dis = new int[m][n];
-        int[][] add = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 if (grid[i][j] == 1) {
                     house++;
-                    int level = 1;
-                    Queue<int[]> queue = new LinkedList<>();
-                    queue.offer(new int[] {i, j});
-                    boolean[][] visited = new boolean[m][n];
-                    while (!queue.isEmpty()) {
-                        int size = queue.size();
-                        for (int q = 0; q < size; q++) {
-                            int[] cur = queue.poll();
-                            for (int k = 0; k < 4; k++) {
-                                int nx = cur[0] + add[k][0];
-                                int ny = cur[1] + add[k][1];
-                                if (nx >= 0 && nx < m && ny >= 0 && ny < n && !visited[nx][ny] && grid[nx][ny] == 0) {
-                                    visited[nx][ny] = true;
-                                    reach[nx][ny]++;
-                                    dis[nx][ny] += level;
-                                    queue.offer(new int[] {nx, ny});
-                                }
-                            }
-                        }
-                        level++; //每多一层，别忘了步数+1
-                    }
+                    bfs(grid, reach, dis, i, j);
                 }
             }
         }
-        int min = Integer.MAX_VALUE;
+        int min = Integer.MAX_VALUE; // the max case could be complex that more than m * n
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 0 && reach[i][j] == house) min = Math.min(min, dis[i][j]);
+                if (grid[i][j] == 0 && reach[i][j] == house) min = Math.min(min, dis[i][j]); //all houses can reach with min distance
             }
         }
         return min == Integer.MAX_VALUE ? -1 : min;
+    }
+    
+    private void bfs(int[][] grid, int[][] reach, int[][] dis, int i, int j) {
+        int m = grid.length, n = grid[0].length, level = 1;
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[] {i, j});
+        boolean[][] visited = new boolean[m][n];
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int q = 0; q < size; q++) {
+                int[] cur = queue.poll();
+                for (int k = 0; k < 4; k++) {
+                    int nx = cur[0] + dirs[k][0];
+                    int ny = cur[1] + dirs[k][1];
+                    if (nx >= 0 && nx < m && ny >= 0 && ny < n && !visited[nx][ny] && grid[nx][ny] == 0) {
+                        visited[nx][ny] = true;
+                        reach[nx][ny]++;
+                        dis[nx][ny] += level;
+                        queue.offer(new int[] {nx, ny});
+                    }
+                }
+            }
+            level++;
+        }
     }
 }
 
