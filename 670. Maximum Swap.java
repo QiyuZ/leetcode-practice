@@ -4,19 +4,16 @@ class Solution {
         String s = num + "";
         while (i < s.length() && s.charAt(i) <= s.charAt(i - 1)) i++;
         if (i == s.length()) return num;
-        int max = -1, max_pos = -1;
-        for (int j = i; j < s.length(); j++) {
-            int value = Integer.parseInt(s.charAt(j) + "");
-            if (value >= max) { //should use >= 要使得这个数尽量在后面（相等情况下）
-                max = value;
+        int max_pos = -1;
+        char max = s.charAt(i);
+        for (int j = i; j < s.length(); j++) { //find the largest one on the second part
+            if (s.charAt(j) >= max) { //should use >= 要使得这个数尽量在后面（相等情况下）
+                max = s.charAt(j);
                 max_pos = j;
             }
         }
         for (int k = 0; k < i; k++) {
-            int value = Integer.parseInt(s.charAt(k) + "");
-            if (value < max) { //find the first one smaller than max
-                return swap(s, max_pos, k);
-            }
+            if (s.charAt(k) < max) return swap(s, max_pos, k); //find the first one smaller than max
         }
         return num;
     }
