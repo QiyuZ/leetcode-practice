@@ -16,3 +16,31 @@ class Solution {
         return find(parents[num], parents);
     }
 }
+
+
+class Solution {
+    public boolean validTree(int n, int[][] edges) {
+        if (edges.length != n - 1) return false;
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        for (int[] edge : edges) {
+            if (!graph.containsKey(edge[0])) graph.put(edge[0], new ArrayList<>());
+            if (!graph.containsKey(edge[1])) graph.put(edge[1], new ArrayList<>());
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        Set<Integer> seen = new HashSet<>();
+        queue.offer(0); //not need to use indegree as it starts with 0;
+        seen.add(0);
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            if (!graph.containsKey(node)) continue;
+            for (int neighbour : graph.get(node)) {
+                if (seen.contains(neighbour)) continue;
+                seen.add(neighbour);
+                queue.offer(neighbour);
+            }
+        }
+        return seen.size() == n;   
+    }
+}
