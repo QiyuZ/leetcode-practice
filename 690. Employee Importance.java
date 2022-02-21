@@ -26,3 +26,18 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+    public int getImportance(List<Employee> employees, int id) {
+        if (employees == null || employees.isEmpty()) return 0;
+        Map<Integer, Employee> map = new HashMap<>();
+        for (Employee e : employees) map.put(e.id, e);
+        return dfs(map, id);
+    }
+    private int dfs(Map<Integer, Employee> map, int id) {
+        Employee cur = map.get(id);
+        int res = cur.importance;
+        for (int next : cur.subordinates) res += dfs(map, next);
+        return res;
+    }
+}
