@@ -1,78 +1,30 @@
-class Solution {
-    public String minWindow(String S, String T) {
-        int[][] M = new int[S.length()][T.length()];
-        for(int i = 0; i < S.length(); i ++){
-            if(S.charAt(i) == T.charAt(0)){
-                M[i][0] = i;        //  largest starting index matches only first char in T
-            }else{
-                if(i == 0){
-                    M[i][0] = -1;    // S, T both have 1 char, if !match, fill -1 means we can't find a substring for S(0) & T(0)
-                }else{
-                    M[i][0] = M[i - 1][0];
-                }
-            }
-        }
-        for(int j = 1; j < T.length(); j ++){
-            for(int i = 0; i < S.length(); i ++){
-                if(S.charAt(i) == T.charAt(j)){
-                    if(i == 0){
-                        M[i][j] = -1;       //  Actually, if j > i, M[i][j] is always -1, cause we cant find a substring of a shorter string matches a longer string
-                    }else{
-                        M[i][j] = M[i - 1][j - 1];  // As share2017 mentioned in his post
-                    }
-                }else{
-                    if(i == 0){
-                        M[i][j] = -1;      
-                    }else{
-                        M[i][j] = M[i - 1][j];  
-                    }
-                }
-            }
-        }
-        int start = 0;
-        int len = Integer.MAX_VALUE;
-        for(int i = 0; i < S.length(); i ++){
-            if(M[i][T.length() - 1] != -1){
-                if(i - M[i][T.length() - 1] + 1 < len){
-                    len = i - M[i][T.length() - 1] + 1;
-                    start = M[i][T.length() - 1];
-                }
-            }
-        }
-        return len == Integer.MAX_VALUE ? "" : S.substring(start, start + len);
-    }
-}
-
-class Solution {
-    public String minWindow(String S, String T) {
-        char[] s = S.toCharArray();
-        char[] t = T.toCharArray();
-        int i = 0;
-        int j = 0;
-        int minL = Integer.MAX_VALUE;
-        int start = -1;
-        while (i < s.length) {
-            if (s[i] == t[j]) {
-                j++;
-                if (j == t.length) {
-                    int end = i;
-                    j--;
-                    while (j >= 0) {
-                        if (s[i] == t[j]) {
-                            j--;
-                        }
+class Solution { //2 pointers O(n)
+    public String minWindow(String S, String T) { //2 pointers to find the matched substring and go back to start point to get substring
+        if (S.equals(T)) return S;
+        if (S.length() < T.length()) return "";
+        char[] s = S.toCharArray(), t = T.toCharArray();
+        String res = "";
+        int i = 0, tindex = 0, slen = s.length, tlen = t.length, len = slen + 1;
+        while(i < slen) {
+            if(s[i] == t[tindex]) {
+                tindex++; //move tIndex if find match
+                if(tindex == tlen) { // all chars in T has been matched
+                    int end = i + 1; //i is the last match index in S
+                    tindex--; // now tindex is the last index in T
+                    while(tindex >= 0) {  //both i and tindex move back to find the start point
+                        if(s[i] == t[tindex]) tindex--;
                         i--;
                     }
-                    if (end - i < minL) {
-                        minL = end - i;
-                        start = i + 1;
+                    i++;  //we found the first match index in S
+                    tindex++;  //now tindex == 0, the first match index in T
+                    if(end - i < len) { //optimization ops
+                        len = end - i;
+                        res = S.substring(i, end); // [i, end) is the matching subsequence
                     }
-                    i++;
-                    j = 0;
                 }
             }
-            i++;
+            i++; //because whatever case we will move i, so even it back to start, it will move to next one, so not a loop. like "abcdebdde", "bde", after find the start b, it will move to c
         }
-        return start == -1? "" : S.substring(start, start + minL);
+        return len == slen + 1 ? "" : res;
     }
 }
