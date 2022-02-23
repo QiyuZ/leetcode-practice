@@ -22,32 +22,33 @@ class Solution {
 }
 
 
-
-class Solution {
-    
-    Map<Integer, Integer> f = new HashMap<>();
-    int islands = 0;
-
+class Solution { //O(n)
     public int removeStones(int[][] stones) {
-        for (int i = 0; i < stones.length; ++i)
-            union(stones[i][0], stones[i][1] + 10000);
-        return stones.length - islands;
+        Map<String, List<String>> graph = new HashMap<>();
+        for (int[] stone : stones) {
+            final String key0 = stone[0] + "", key1 = stone[1] + "!"; //since could be the same, use different string to identify
+            if (!graph.containsKey(key0)) graph.put(key0, new ArrayList<>());
+            if (!graph.containsKey(key1)) graph.put(key1, new ArrayList<>());
+            graph.get(key0).add(key1);
+            graph.get(key1).add(key0);
+        }
+        int numOfComponent = 0;
+        Set<String> visited = new HashSet<>();
+        for (int[] stone : stones) {
+            for (int i = 0; i < 2; i++) {
+                String key = i == 0 ? stone[0] + "" :stone[1] + "!";
+                if (!visited.contains(key)) {
+                    numOfComponent++;
+                    dfs(key, graph, visited);
+                }
+            } 
+        }
+        return stones.length - numOfComponent; //eg. if there's just 1 component (all connected), then we only keep 1 of the element and remove others, so the removed is the substract result
     }
-
-    public int find(int x) {
-        if (f.putIfAbsent(x, x) == null)
-            islands++;
-        if (x != f.get(x))
-            f.put(x, find(f.get(x)));
-        return f.get(x);
-    }
-
-    public void union(int x, int y) {
-        x = find(x);
-        y = find(y);
-        if (x != y) {
-            f.put(x, y);
-            islands--;
+    
+    private void dfs(String stone, Map<String, List<String>> graph, Set<String> visited) {
+        if (visited.add(stone)) {
+            for (String next : graph.get(stone)) dfs(next, graph, visited);
         }
     }
 }
