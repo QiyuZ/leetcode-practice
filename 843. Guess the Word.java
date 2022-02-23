@@ -45,3 +45,31 @@ class Solution {
         return count;
     }
 }
+
+
+
+class Solution {
+    public void findSecretWord(String[] wordlist, Master master) {
+        Random rand = new Random();
+        List<String> words = new ArrayList<>();
+        for (String w : wordlist) words.add(w);
+        for (int i = 0; i < 10; i++) {
+            String chosen = words.get(rand.nextInt(words.size()));
+            int res = master.guess(chosen);
+            if (res == 6) return;
+            List<String> next = new ArrayList<>();
+            for (String w : words) {
+                if (!w.equals(chosen) && res == countMatches(w, chosen)) next.add(w); //choose the one has same matches with target, ignore others
+            }
+            words = next;
+        }
+    }
+    
+    private int countMatches(String a, String b) {
+        int matches = 0, i = 0, j = 0;
+        while (i < a.length() && j < b.length()) {
+            if (a.charAt(i++) == b.charAt(j++)) matches++;
+        }
+        return matches;
+    }
+}
