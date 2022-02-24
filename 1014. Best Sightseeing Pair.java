@@ -10,3 +10,14 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+    public int maxScoreSightseeingPair(int[] A) {
+        int res = 0, left = 0;
+        for(int i = 0; i < A.length; ++i) {
+            res = Math.max(res, left + A[i] - i);
+            left = Math.max(left, A[i] + i);
+        }
+        return res;
+    }
+}
