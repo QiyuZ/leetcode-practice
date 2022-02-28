@@ -3,14 +3,11 @@ class SnapshotArray {
     int snap;
     public SnapshotArray(int length) {
         arr = new TreeMap[length];
-        for (int i = 0; i < length; i++) {
-            arr[i] = new TreeMap<Integer, Integer>();
-            arr[i].put(0, 0); //防止直接snap 然后get
-        }
         snap = 0;
     }
     
     public void set(int index, int val) {
+        if (arr[index] == null) arr[index] = new TreeMap<>();
         arr[index].put(snap, val);
     }
     
@@ -19,8 +16,8 @@ class SnapshotArray {
     }
     
     public int get(int index, int snap_id) {
-        int realSnap = arr[index].floorKey(snap_id); //防止snap并没有那么多次
-        return arr[index].get(realSnap);
+        Integer realSnap = arr[index] == null ? null : arr[index].floorKey(snap_id); //防止snap并没有那么多次, null checker to avoid null
+        return realSnap == null ? 0 : arr[index].get(realSnap);
     }
 }
 
@@ -31,7 +28,30 @@ class SnapshotArray {
  * int param_2 = obj.snap();
  * int param_3 = obj.get(index,snap_id);
  */
+class SnapshotArray { //instead of store whole array for several times, we can use bucket, one bucket for one index, and in the bucket we use map to set snapshot id - value
 
+    private List<Map<Integer, Integer>> list;
+    public SnapshotArray(int length) {
+        list = new ArrayList<>();
+        list.add(new HashMapt<>());
+    }
+    
+    public void set(int index, int val) {
+        list.get(list.size() - 1).put(index, val);
+    }
+    
+    public int snap() {
+        list.add(new HashMap<>());
+        return list.size() - 2;
+    }
+    
+    public int get(int index, int snap_id) {
+        for (int snap = snap_id; snap >= 0; snap--) {
+            if (list.get(snap).containsKey(index)) return list.get(snap).get(index);
+        }
+        return 0;
+    }
+}
 
 
 class SnapshotArray {
