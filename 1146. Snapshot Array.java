@@ -30,24 +30,25 @@ class SnapshotArray {
  */
 class SnapshotArray { //instead of store whole array for several times, we can use bucket, one bucket for one index, and in the bucket we use map to set snapshot id - value
 
-    private List<Map<Integer, Integer>> list;
+    private Map<Integer, Integer>[] list;
+    int snap;
     public SnapshotArray(int length) {
-        list = new ArrayList<>();
-        list.add(new HashMapt<>());
+        list = new HashMap[length];
+        snap = 0;
     }
     
     public void set(int index, int val) {
-        list.get(list.size() - 1).put(index, val);
+        if (list[index] == null) list[index] = new HashMap<>();
+        list[index].put(snap, val);
     }
     
     public int snap() {
-        list.add(new HashMap<>());
-        return list.size() - 2;
+        return snap++;
     }
     
     public int get(int index, int snap_id) {
         for (int snap = snap_id; snap >= 0; snap--) {
-            if (list.get(snap).containsKey(index)) return list.get(snap).get(index);
+            if (list[index] != null && list[index].containsKey(snap)) return list[index].get(snap);
         }
         return 0;
     }
